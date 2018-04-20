@@ -23,14 +23,62 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import lu.kremi151.a3dtictactoe.GameModeAdapter;
 import lu.kremi151.a3dtictactoe.R;
 
 public class WelcomeFragment extends Fragment {
 
+    private ListView listView;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_welcome, container, false);
+        listView = (ListView) inflater.inflate(R.layout.fragment_welcome, container, false);
+        return listView;
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        listView.setAdapter(new GameModeAdapter(
+                this.getLayoutInflater(),
+                Arrays.asList(
+                        new GameModeAdapter.Item(
+                                R.string.gm_single,
+                                R.string.gm_single_desc,
+                                R.drawable.ic_person_black_24dp
+                        ),
+                        new GameModeAdapter.Item(
+                                R.string.gm_multi_local,
+                                R.string.gm_multi_local_desc,
+                                R.drawable.ic_people_black_24dp
+                        )
+                )
+        ));
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                switch(i){
+                    case 0:
+                        getFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.container, new SingleplayerDifficultyFragment())
+                                .commit();
+                        break;
+                    case 1:
+                        getFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.container, GameFragment.newLocalMultiplayer())
+                                .commit();
+                        break;
+                }
+            }
+        });
     }
 
 }

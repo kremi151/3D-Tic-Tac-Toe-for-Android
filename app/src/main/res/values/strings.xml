@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">3D Tic Tac Toe</string>
     <string name="gm_multi_local">Local multiplayer</string>
+    <string name="gm_multi_local_desc">Player vs. Player on one device</string>
     <string name="gm_single">Singleplayer</string>
+    <string name="gm_single_desc">Player vs. CPU</string>
     <string name="choose_difficulty">Choose your difficulty</string>
     <string name="difficulty_very_easy">Very easy</string>
     <string name="difficulty_easy">Easy</string>

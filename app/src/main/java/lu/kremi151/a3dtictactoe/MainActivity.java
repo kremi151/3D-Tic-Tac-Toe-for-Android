@@ -26,6 +26,7 @@ import android.view.MenuItem;
 
 import lu.kremi151.a3dtictactoe.fragment.GameFragment;
 import lu.kremi151.a3dtictactoe.fragment.SingleplayerDifficultyFragment;
+import lu.kremi151.a3dtictactoe.fragment.WelcomeFragment;
 import lu.kremi151.a3dtictactoe.mode.GameModeLocalMultiplayer;
 import lu.kremi151.a3dtictactoe.mode.GameModeSingleplayer;
 import lu.kremi151.a3dtictactoe.util.GameCube;
@@ -39,6 +40,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart(){
+        super.onStart();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.container, new WelcomeFragment())
+                .commit();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
@@ -47,21 +57,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.gm_single:
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.container, new SingleplayerDifficultyFragment())
-                        .commit();
-                return true;
-            case R.id.gm_multi_local:
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.container, GameFragment.newLocalMultiplayer())
-                        .commit();
-                return true;
-        }
-        return false;
+        return super.onOptionsItemSelected(item);
     }
 }

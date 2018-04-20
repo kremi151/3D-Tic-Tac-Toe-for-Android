@@ -6,9 +6,17 @@
     android:layout_height="match_parent"
     tools:context="lu.kremi151.a3dtictactoe.MainActivity">
 
-    <fragment
+    <!-- <fragment
         android:id="@+id/container"
         android:name="lu.kremi151.a3dtictactoe.fragment.WelcomeFragment"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" /> -->
+
+    <FrameLayout
+        android:id="@+id/container"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
