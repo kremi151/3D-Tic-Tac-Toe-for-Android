@@ -45,6 +45,20 @@ public class CubeRow {
         return d;
     }
 
+    public final int fieldCount(){
+        return 4;
+    }
+
+    public final CubeField getField(int index){
+        switch(index){
+            case 0: return a;
+            case 1: return b;
+            case 2: return c;
+            case 3: return d;
+            default: throw new IndexOutOfBoundsException("Row only has " + fieldCount() + " fields, index requested for " + index);
+        }
+    }
+
     public boolean contains(CubeField field){
         return a.equals(field) || b.equals(field) || c.equals(field) || d.equals(field);
     }

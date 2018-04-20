@@ -19,9 +19,8 @@
 package lu.kremi151.a3dtictactoe.mode;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
-
-import java.lang.reflect.Field;
 
 import lu.kremi151.a3dtictactoe.enums.FieldValue;
 import lu.kremi151.a3dtictactoe.interfaces.OnBoardTapListener;
@@ -79,6 +78,10 @@ public abstract class GameMode implements OnBoardTapListener{
 
     public boolean isLocked(){
         return this.locked;
+    }
+
+    public int getFieldColor(int x, int y, int z){
+        return Color.WHITE;
     }
 
 }

@@ -19,6 +19,7 @@
 package lu.kremi151.a3dtictactoe.fragment;
 
 import android.annotation.SuppressLint;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -28,6 +29,7 @@ import android.view.ViewGroup;
 
 import lu.kremi151.a3dtictactoe.R;
 import lu.kremi151.a3dtictactoe.enums.FieldValue;
+import lu.kremi151.a3dtictactoe.interfaces.FieldColorInterceptor;
 import lu.kremi151.a3dtictactoe.interfaces.OnBoardTapListener;
 import lu.kremi151.a3dtictactoe.mode.GameMode;
 import lu.kremi151.a3dtictactoe.mode.GameModeLocalMultiplayer;
@@ -69,6 +71,7 @@ public class GameFragment extends Fragment{
         super.onStart();
         gameBoard.setCube(cube);
         gameBoard.setListener(listener);
+        gameBoard.setFieldColorInterceptor(fieldColorInterceptor);
         gameBoard.resume();
     }
 
@@ -88,6 +91,14 @@ public class GameFragment extends Fragment{
         @Override
         public boolean onTap(int x, int y, int z) {
             return !gameMode.isLocked() && gameMode.onTap(x, y, z);
+        }
+    };
+
+    private final FieldColorInterceptor fieldColorInterceptor = new FieldColorInterceptor() {
+        @Override
+        public Paint getFieldColor(int x, int y, int z, Paint paint) {
+            paint.setColor(gameMode.getFieldColor(x, y, z));
+            return paint;
         }
     };
 

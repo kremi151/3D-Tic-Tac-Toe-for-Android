@@ -19,7 +19,6 @@
 package lu.kremi151.a3dtictactoe.mode;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
@@ -33,39 +32,54 @@ import lu.kremi151.a3dtictactoe.util.CubeField;
 import lu.kremi151.a3dtictactoe.util.CubeRow;
 import lu.kremi151.a3dtictactoe.util.GameCube;
 
-public class GameModeSingleplayer extends GameMode {
+public class GameModeWeightedSingleplayer extends GameMode {
 
     private final FieldValue player = FieldValue.CIRCLE;
     private final List<CubeRow> possibilities;
-    private final List<CubeField> fields;
     private final Random random = new Random(System.currentTimeMillis());
     private float attack = 0.5f;
     private float defense = 0.5f;
-    private final float mind[][][] = new float[cube.width()][cube.height()][cube.depth()];
-    private float mindMax = 1.0f;
 
-    public GameModeSingleplayer(Context context, GameCube cube) {
+    public GameModeWeightedSingleplayer(Context context, GameCube cube) {
         super(context, cube);
         possibilities = new ArrayList<>(cube.getRows());
-        fields = new ArrayList<>(cube.width() * cube.height() * cube.depth());
-        for(int x = 0 ; x < cube.width() ; x++){
-            for(int y = 0 ; y < cube.height() ; y++){
-                for(int z = 0 ; z < cube.depth() ; z++){
-                    fields.add(new CubeField(x, y, z));
-                }
-            }
-        }
     }
 
-    private void resetMind(){
-        mindMax = 1.0f;
-        for(int x = 0 ; x < cube.width() ; x++){
-            for(int y = 0 ; y < cube.height() ; y++){
-                for(int z = 0 ; z < cube.depth() ; z++){
-                    mind[x][y][z] = 0.0f;
-                }
+    private boolean isRowLost(CubeRow row){
+        boolean cross = false, circle = false;
+        FieldValue a = cube.valueAt(row.getA());
+        FieldValue b = cube.valueAt(row.getB());
+        FieldValue c = cube.valueAt(row.getC());
+        FieldValue d = cube.valueAt(row.getD());
+        if(a != FieldValue.EMPTY){
+            if(a == FieldValue.CIRCLE){
+                circle = true;
+            }else if(a == FieldValue.CROSS){
+                cross = true;
             }
         }
+        if(b != FieldValue.EMPTY){
+            if(b == FieldValue.CIRCLE){
+                circle = true;
+            }else if(b == FieldValue.CROSS){
+                cross = true;
+            }
+        }
+        if(c != FieldValue.EMPTY){
+            if(c == FieldValue.CIRCLE){
+                circle = true;
+            }else if(c == FieldValue.CROSS){
+                cross = true;
+            }
+        }
+        if(d != FieldValue.EMPTY){
+            if(d == FieldValue.CIRCLE){
+                circle = true;
+            }else if(d == FieldValue.CROSS){
+                cross = true;
+            }
+        }
+        return circle && cross;
     }
 
     @Nullable
@@ -88,38 +102,27 @@ public class GameModeSingleplayer extends GameMode {
         return new CubeField(targetX, targetY, targetZ);
     }
 
-    private float rowProbability(CubeRow row){
-        /*return Math.max(
-                attack * cube.chanceToWinOnRow(player.opposite(), row),
-                defense * cube.chanceToWinOnRow(player, row)
-        );*/
-        return attack * cube.chanceToWinOnRow(player.opposite(), row) +
-                defense * cube.chanceToWinOnRow(player, row);
-    }
-
     @Override
     public boolean onTap(int x, int y, int z) {
         if(cube.valueAt(x, y, z) == FieldValue.EMPTY){
             cube.setValueAt(x, y, z, player);
             if(!announceWinner()){
-                resetMind();
+                float mind[][][] = new float[cube.width()][cube.height()][cube.depth()];
                 Iterator<CubeRow> it = possibilities.iterator();
                 while(it.hasNext()){
                     CubeRow row = it.next();
-
-                    final float probability = Math.min(1f, rowProbability(row));
-                    if(probability == 0.0f){
+                    if(isRowLost(row)){
                         it.remove();
                     }else{
-                        for(int fieldIndex = 0 ; fieldIndex < row.fieldCount() ; fieldIndex++){
-                            CubeField field = row.getField(fieldIndex);
-                            float value = mind[field.getX()][field.getY()][field.getZ()];
-                            value = Math.max(value, probability);
-                            mind[field.getX()][field.getY()][field.getZ()] = value;
-                            if(value > mindMax){
-                                mindMax = value;
-                            }
-                        }
+                        float attackChance = cube.chanceToWinOnRow(player.opposite(), row);
+                        float defenceChance = cube.chanceToWinOnRow(player, row);
+                        float weightedChance = true
+                                ? Math.max(attackChance, defenceChance)
+                                : ((attack * attackChance) + (defense * defenceChance));
+                        mind[row.getA().getX()][row.getA().getY()][row.getA().getZ()] += weightedChance;
+                        mind[row.getB().getX()][row.getB().getY()][row.getB().getZ()] += weightedChance;
+                        mind[row.getC().getX()][row.getC().getY()][row.getC().getZ()] += weightedChance;
+                        mind[row.getD().getX()][row.getD().getY()][row.getD().getZ()] += weightedChance;
                     }
                 }
 
@@ -150,11 +153,5 @@ public class GameModeSingleplayer extends GameMode {
             return true;
         }
         return false;
-    }
-
-    @Override
-    public int getFieldColor(int x, int y, int z){
-        int factor = (int)Math.ceil((255f * mind[x][y][z]) / mindMax);
-        return Color.rgb(255, 255 - factor, 255 - factor);
     }
 }

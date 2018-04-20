@@ -29,6 +29,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import lu.kremi151.a3dtictactoe.enums.FieldValue;
+import lu.kremi151.a3dtictactoe.interfaces.FieldColorInterceptor;
 import lu.kremi151.a3dtictactoe.interfaces.OnBoardTapListener;
 import lu.kremi151.a3dtictactoe.util.GameCube;
 
@@ -36,7 +37,7 @@ public class GameBoard extends SurfaceView implements Runnable {
 
     private Context mContext;
     private SurfaceHolder mSurfaceHolder;
-    private Paint fieldPaint, fieldValuePaint;
+    private Paint fieldPaint, fieldContentPaint, fieldValuePaint;
     private boolean mRunning;
     private Thread mGameThread;
 
@@ -44,6 +45,7 @@ public class GameBoard extends SurfaceView implements Runnable {
     private int mViewWidth, mViewHeight;
     private float layerSize, layerSpacing, fieldSize;
     private OnBoardTapListener listener;
+    private FieldColorInterceptor fieldColorInterceptor;
 
     private GameCube cube = new GameCube();
 
@@ -81,6 +83,9 @@ public class GameBoard extends SurfaceView implements Runnable {
         fieldPaint.setStyle(Paint.Style.STROKE);
         fieldValuePaint = new Paint(fieldPaint);
         fieldValuePaint.setStrokeWidth(4);
+        fieldContentPaint = new Paint();
+        fieldContentPaint.setColor(Color.WHITE);
+        fieldContentPaint.setStyle(Paint.Style.FILL);
     }
 
     public void pause() {
@@ -104,6 +109,10 @@ public class GameBoard extends SurfaceView implements Runnable {
         this.listener = listener;
     }
 
+    public void setFieldColorInterceptor(FieldColorInterceptor interceptor){
+        this.fieldColorInterceptor = interceptor;
+    }
+
     @Override
     public void run() {
         Canvas canvas;
@@ -123,6 +132,15 @@ public class GameBoard extends SurfaceView implements Runnable {
                             }else{
                                 left = (z * layerSize) + (x * fieldSize);
                                 top = (z * layerSpacing) + (y * fieldSize);
+                            }
+                            if(this.fieldColorInterceptor != null){
+                                Paint fieldContentPaint = this.fieldColorInterceptor.getFieldColor(x, y, z, this.fieldContentPaint);
+                                canvas.drawRect(
+                                        left,
+                                        top,
+                                        left + fieldSize,
+                                        top + fieldSize,
+                                        fieldContentPaint);
                             }
                             canvas.drawRect(
                                     left,
