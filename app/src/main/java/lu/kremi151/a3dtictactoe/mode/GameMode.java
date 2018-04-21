@@ -96,11 +96,15 @@ public abstract class GameMode implements OnBoardTapListener{
     }
 
     public int getFieldValueColor(int x, int y, int z, int previousColor){
-        if(winningRow != null && winningRow.contains(x, y, z)){
+        if(winningRow != null && winningRow.contains(x, y, z)) {
             return Color.GREEN;
-        }else{
-            return previousColor;
+        }else if(cube.hasMoves()){
+            final GameCube.Move move = cube.getLastMove();
+            if(move.getX() == x && move.getY() == y && move.getZ() == z){
+                return Color.BLUE;
+            }
         }
+        return previousColor;
     }
 
     public abstract void onInit();

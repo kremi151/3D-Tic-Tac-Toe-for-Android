@@ -69,6 +69,10 @@ public class GameCube {
         }
     }
 
+    public boolean hasMoves(){
+        return history.size() > 0;
+    }
+
     public int width(){
         return 4;
     }

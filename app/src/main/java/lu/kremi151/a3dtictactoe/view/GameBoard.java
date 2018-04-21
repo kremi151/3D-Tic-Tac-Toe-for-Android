@@ -126,8 +126,6 @@ public class GameBoard extends SurfaceView implements Runnable {
                 canvas.save();
                 canvas.drawColor(Color.WHITE);
 
-                GameCube.Move lastMove = cube.getLastMove();
-
                 for(int z = 0 ; z < this.cube.depth() ; z++){
                     for(int x = 0 ; x < this.cube.width() ; x++){
                         for(int y = 0 ; y < this.cube.height() ; y++){
@@ -154,13 +152,8 @@ public class GameBoard extends SurfaceView implements Runnable {
                                     left + fieldSize,
                                     top + fieldSize,
                                     fieldPaint);
-                            if(lastMove != null && lastMove.getX() == x && lastMove.getY() == y && lastMove.getZ() == z){
-                                fieldValuePaint.setColor(Color.BLUE);
-                            }else{
-                                fieldValuePaint.setColor(Color.BLACK);
-                            }
                             if(this.valueColorInterceptor != null){
-                                fieldValuePaint.setColor(valueColorInterceptor.getFieldColor(x, y, z, fieldValuePaint.getColor()));
+                                fieldValuePaint.setColor(valueColorInterceptor.getFieldColor(x, y, z, Color.BLACK));
                             }
                             switch (cube.valueAt(x, y, z)){
                                 case CIRCLE:
