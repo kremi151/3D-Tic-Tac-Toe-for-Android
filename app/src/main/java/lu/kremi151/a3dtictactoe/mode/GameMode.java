@@ -22,7 +22,9 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 
+import lu.kremi151.a3dtictactoe.R;
 import lu.kremi151.a3dtictactoe.enums.FieldValue;
+import lu.kremi151.a3dtictactoe.interfaces.ActivityInterface;
 import lu.kremi151.a3dtictactoe.interfaces.OnBoardTapListener;
 import lu.kremi151.a3dtictactoe.util.CubeRow;
 import lu.kremi151.a3dtictactoe.util.GameCube;
@@ -30,12 +32,12 @@ import lu.kremi151.a3dtictactoe.util.GameCube;
 public abstract class GameMode implements OnBoardTapListener{
 
     protected final GameCube cube;
-    private final Context context;
+    private final ActivityInterface activity;
     private boolean locked = false;
 
-    public GameMode(Context context, GameCube cube){
+    public GameMode(ActivityInterface activity, GameCube cube){
         this.cube = cube;
-        this.context = context;
+        this.activity = activity;
     }
 
     protected final GameCube getCube(){
@@ -43,18 +45,20 @@ public abstract class GameMode implements OnBoardTapListener{
     }
 
     protected final Context getContext(){
-        return context;
+        return activity.getContext();
     }
 
     protected final boolean announceWinner(){
         CubeRow winningRow = cube.searchWinningRow();
         if(winningRow != null){
             FieldValue winner = cube.evaluateRow(winningRow);
+            final String message = getContext().getString(R.string.player_won, getContext().getString(winner.getTitleResource()));
             new AlertDialog.Builder(getContext())
-                    .setTitle("Game finished")
-                    .setMessage(winner.name() + " has won!")
+                    .setTitle(R.string.game_finished)
+                    .setMessage(message)
                     .create()
                     .show();
+            activity.setSubtitle(message);
             lockGame(true);
             //TODO: Announce
             return true;
@@ -64,12 +68,18 @@ public abstract class GameMode implements OnBoardTapListener{
     }
 
     protected final void giveUp(FieldValue player){
+        final String message = getContext().getString(R.string.player_gave_up, getContext().getString(player.getTitleResource()));
         new AlertDialog.Builder(getContext())
-                .setTitle("Game finished")
-                .setMessage(player.name() + " has given up!")
+                .setTitle(R.string.game_finished)
+                .setMessage(message)
                 .create()
                 .show();
+        activity.setSubtitle(message);
         lockGame(true);
+    }
+
+    protected final void announceNextPlayer(FieldValue player){
+        activity.setSubtitle(R.string.player_turn, activity.getContext().getString(player.getTitleResource()));
     }
 
     protected void lockGame(boolean v){
@@ -87,5 +97,7 @@ public abstract class GameMode implements OnBoardTapListener{
     public int getFieldValueColor(int x, int y, int z, int previousColor){
         return previousColor;
     }
+
+    public abstract void onInit();
 
 }

@@ -19,16 +19,19 @@
 package lu.kremi151.a3dtictactoe.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import lu.kremi151.a3dtictactoe.R;
 import lu.kremi151.a3dtictactoe.enums.FieldValue;
+import lu.kremi151.a3dtictactoe.interfaces.ActivityInterface;
 import lu.kremi151.a3dtictactoe.interfaces.FieldColorInterceptor;
 import lu.kremi151.a3dtictactoe.interfaces.OnBoardTapListener;
 import lu.kremi151.a3dtictactoe.mode.GameMode;
@@ -51,11 +54,11 @@ public class GameFragment extends Fragment{
         super.onCreate(savedInstanceState);
         if(getArguments() != null){
             switch(getArguments().getString("gameMode", "multi_local")){
-                case "single": gameMode = new GameModeSingleplayer(getContext(), cube); break;
-                default: gameMode = new GameModeLocalMultiplayer(getContext(), cube); break;
+                case "single": gameMode = new GameModeSingleplayer(activityInterface, cube); break;
+                default: gameMode = new GameModeLocalMultiplayer(activityInterface, cube); break;
             }
         }else{
-            gameMode = new GameModeLocalMultiplayer(getContext(), cube);
+            gameMode = new GameModeLocalMultiplayer(activityInterface, cube);
         }
     }
 
@@ -74,6 +77,7 @@ public class GameFragment extends Fragment{
         gameBoard.setFieldColorInterceptor(fieldColorInterceptor);
         gameBoard.setValueColorInterceptor(fieldValueColorInterceptor);
         gameBoard.resume();
+        gameMode.onInit();
     }
 
     @Override
@@ -106,6 +110,23 @@ public class GameFragment extends Fragment{
         @Override
         public int getFieldColor(int x, int y, int z, int previousColor) {
             return gameMode.getFieldValueColor(x, y, z, previousColor);
+        }
+    };
+
+    private final ActivityInterface activityInterface = new ActivityInterface() {
+        @Override
+        public void setSubtitle(int subtitle, Object... args) {
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(getString(subtitle, args));
+        }
+
+        @Override
+        public void setSubtitle(CharSequence subtitle) {
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(subtitle);
+        }
+
+        @Override
+        public Context getContext() {
+            return GameFragment.this.getContext();
         }
     };
 

@@ -11,4 +11,11 @@
     <string name="difficulty_hard">Hard</string>
     <string name="difficulty_very_hard">Very hard</string>
     <string name="difficulty_frustrating">Frustrating</string>
+    <string name="cross">Cross</string>
+    <string name="circle">Circle</string>
+    <string name="empty">Empty</string>
+    <string name="player_turn">It\'s the turn of %s</string>
+    <string name="player_won">%s has won!</string>
+    <string name="player_gave_up">%s gave up!</string>
+    <string name="game_finished">Game finished</string>
 </resources>

@@ -18,16 +18,15 @@
 
 package lu.kremi151.a3dtictactoe.mode;
 
-import android.content.Context;
 import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 import lu.kremi151.a3dtictactoe.enums.FieldValue;
+import lu.kremi151.a3dtictactoe.interfaces.ActivityInterface;
 import lu.kremi151.a3dtictactoe.util.CubeField;
 import lu.kremi151.a3dtictactoe.util.CubeRow;
 import lu.kremi151.a3dtictactoe.util.GameCube;
@@ -40,9 +39,14 @@ public class GameModeWeightedSingleplayer extends GameMode {
     private float attack = 0.5f;
     private float defense = 0.5f;
 
-    public GameModeWeightedSingleplayer(Context context, GameCube cube) {
-        super(context, cube);
+    public GameModeWeightedSingleplayer(ActivityInterface activity, GameCube cube) {
+        super(activity, cube);
         possibilities = new ArrayList<>(cube.getRows());
+    }
+
+    @Override
+    public void onInit() {
+        announceNextPlayer(player);
     }
 
     private boolean isRowLost(CubeRow row){

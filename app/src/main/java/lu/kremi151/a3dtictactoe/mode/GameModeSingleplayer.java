@@ -18,17 +18,15 @@
 
 package lu.kremi151.a3dtictactoe.mode;
 
-import android.content.Context;
-import android.graphics.Color;
 import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 import lu.kremi151.a3dtictactoe.enums.FieldValue;
+import lu.kremi151.a3dtictactoe.interfaces.ActivityInterface;
 import lu.kremi151.a3dtictactoe.util.CubeField;
 import lu.kremi151.a3dtictactoe.util.CubeRow;
 import lu.kremi151.a3dtictactoe.util.GameCube;
@@ -44,8 +42,8 @@ public class GameModeSingleplayer extends GameMode {
     private final float mind[][][] = new float[cube.width()][cube.height()][cube.depth()];
     private float mindMax = 1.0f;
 
-    public GameModeSingleplayer(Context context, GameCube cube) {
-        super(context, cube);
+    public GameModeSingleplayer(ActivityInterface activity, GameCube cube) {
+        super(activity, cube);
         possibilities = new ArrayList<>(cube.getRows());
         fields = new ArrayList<>(cube.width() * cube.height() * cube.depth());
         for(int x = 0 ; x < cube.width() ; x++){
@@ -55,6 +53,11 @@ public class GameModeSingleplayer extends GameMode {
                 }
             }
         }
+    }
+
+    @Override
+    public void onInit() {
+        announceNextPlayer(player);
     }
 
     private void resetMind(){
@@ -102,6 +105,7 @@ public class GameModeSingleplayer extends GameMode {
         if(cube.valueAt(x, y, z) == FieldValue.EMPTY){
             cube.setValueAt(x, y, z, player);
             if(!announceWinner()){
+                announceNextPlayer(player.opposite());
                 resetMind();
                 Iterator<CubeRow> it = possibilities.iterator();
                 while(it.hasNext()){
@@ -142,7 +146,9 @@ public class GameModeSingleplayer extends GameMode {
                         }
                     }
                     cube.setValueAt(targetX, targetY, targetZ, player.opposite());
-                    announceWinner();
+                    if(!announceWinner()){
+                        announceNextPlayer(player);
+                    }
                 }else{
                     giveUp(player.opposite());
                 }

@@ -18,17 +18,21 @@
 
 package lu.kremi151.a3dtictactoe.mode;
 
-import android.content.Context;
-
 import lu.kremi151.a3dtictactoe.enums.FieldValue;
+import lu.kremi151.a3dtictactoe.interfaces.ActivityInterface;
 import lu.kremi151.a3dtictactoe.util.GameCube;
 
 public class GameModeLocalMultiplayer extends GameMode {
 
     private FieldValue current = FieldValue.CROSS;
 
-    public GameModeLocalMultiplayer(Context context, GameCube cube) {
-        super(context, cube);
+    public GameModeLocalMultiplayer(ActivityInterface activity, GameCube cube) {
+        super(activity, cube);
+    }
+
+    @Override
+    public void onInit() {
+        announceNextPlayer(current);
     }
 
     @Override
@@ -37,7 +41,9 @@ public class GameModeLocalMultiplayer extends GameMode {
             cube.setValueAt(x, y, z, current);
             current = current.opposite();
 
-            announceWinner();//TODO
+            if(!announceWinner()){
+                announceNextPlayer(current);
+            }
 
             return true;
         }else{

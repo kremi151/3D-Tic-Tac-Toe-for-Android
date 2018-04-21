@@ -16,31 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package lu.kremi151.a3dtictactoe.enums;
+package lu.kremi151.a3dtictactoe.interfaces;
 
-import lu.kremi151.a3dtictactoe.R;
+import android.content.Context;
 
-public enum FieldValue {
-    EMPTY(R.string.empty),
-    CROSS(R.string.cross),
-    CIRCLE(R.string.circle);
+public interface ActivityInterface {
 
-    private final int titleRes;
-
-    private FieldValue(int titleRes){
-        this.titleRes = titleRes;
-    }
-
-    public int getTitleResource(){
-        return titleRes;
-    }
-
-    public FieldValue opposite(){
-        switch(this){
-            case EMPTY: return EMPTY;
-            case CROSS: return CIRCLE;
-            case CIRCLE: return CROSS;
-        }
-        throw new RuntimeException("Unknown FieldValue type: " + this);
-    }
+    void setSubtitle(int subtitle, Object... args);
+    void setSubtitle(CharSequence subtitle);
+    Context getContext();
 }
