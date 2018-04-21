@@ -20,88 +20,95 @@ package lu.kremi151.a3dtictactoe.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import java.util.Arrays;
+
 import lu.kremi151.a3dtictactoe.R;
+import lu.kremi151.a3dtictactoe.adapter.DifficultyAdapter;
+import lu.kremi151.a3dtictactoe.adapter.GameModeAdapter;
 
 public class SingleplayerDifficultyFragment extends Fragment {
 
-    private Button btnVEasy, btnEasy, btnChallenging, btnHard, btnVHard, btnFrustrating;
+    private RecyclerView recyclerView;
+    private LinearLayoutManager layoutManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_singleplayer_difficulty, container, false);
-        btnVEasy = root.findViewById(R.id.btnDiffVeryEasy);
-        btnEasy = root.findViewById(R.id.btnDiffEasy);
-        btnChallenging = root.findViewById(R.id.btnDiffChallenging);
-        btnHard = root.findViewById(R.id.btnDiffHard);
-        btnVHard = root.findViewById(R.id.btnDiffVeryHard);
-        btnFrustrating = root.findViewById(R.id.btnDiffFrustrating);
+        recyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_recycler_view, container, false);
+        return recyclerView;
+    }
 
-        btnVEasy.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.container, GameFragment.newSingleplayer(0.8f, 0.2f))
-                        .addToBackStack(null)
-                        .commit();
-            }
-        });
-        btnEasy.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.container, GameFragment.newSingleplayer(0.7f, 0.3f))
-                        .addToBackStack(null)
-                        .commit();
-            }
-        });
-        btnChallenging.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.container, GameFragment.newSingleplayer(0.6f, 0.4f))
-                        .addToBackStack(null)
-                        .commit();
-            }
-        });
-        btnHard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.container, GameFragment.newSingleplayer(0.5f, 0.5f))
-                        .addToBackStack(null)
-                        .commit();
-            }
-        });
-        btnVHard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.container, GameFragment.newSingleplayer(0.4f, 0.6f))
-                        .addToBackStack(null)
-                        .commit();
-            }
-        });
-        btnFrustrating.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.container, GameFragment.newSingleplayer(0.3f, 0.7f))
-                        .addToBackStack(null)
-                        .commit();
-            }
-        });
+    @Override
+    public void onStart(){
+        super.onStart();
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(new DifficultyAdapter(
+                this.getLayoutInflater(),
+                Arrays.asList(
+                        new SingleplayerDifficulty(
+                                R.string.difficulty_very_easy,
+                                R.string.difficulty_very_easy_desc,
+                                2.5f,
+                                0.8f
+                        ),
+                        new SingleplayerDifficulty(
+                                R.string.difficulty_easy,
+                                R.string.difficulty_easy_desc,
+                                3.0f,
+                                0.7f
+                        ),
+                        new SingleplayerDifficulty(
+                                R.string.difficulty_challenging,
+                                R.string.difficulty_challenging_desc,
+                                3.5f,
+                                0.6f
+                        ),
+                        new SingleplayerDifficulty(
+                                R.string.difficulty_hard,
+                                R.string.difficulty_hard_desc,
+                                4.0f,
+                                0.5f
+                        ),
+                        new SingleplayerDifficulty(
+                                R.string.difficulty_very_hard,
+                                R.string.difficulty_very_hard_desc,
+                                4.5f,
+                                0.4f
+                        ),
+                        new SingleplayerDifficulty(
+                                R.string.difficulty_frustrating,
+                                R.string.difficulty_frustrating_desc,
+                                5.0f,
+                                0.3f
+                        )
+                )
+        ));
+    }
 
-        return root;
+    private class SingleplayerDifficulty extends DifficultyAdapter.Item{
+
+        private final float attack;
+
+        public SingleplayerDifficulty(int titleRes, int descriptionRes, float rating, float attack) {
+            super(titleRes, descriptionRes, rating);
+            this.attack = Math.min(1f, attack);
+        }
+
+        @Override
+        protected void onClick() {
+            getFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.container, GameFragment.newSingleplayer(attack, 1f - attack))
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 }

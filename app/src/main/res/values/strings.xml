@@ -6,11 +6,17 @@
     <string name="gm_single_desc">Player vs. CPU</string>
     <string name="choose_difficulty">Choose your difficulty</string>
     <string name="difficulty_very_easy">Very easy</string>
+    <string name="difficulty_very_easy_desc">Like a little promenade</string>
     <string name="difficulty_easy">Easy</string>
+    <string name="difficulty_easy_desc">Like a slightly longer promenade</string>
     <string name="difficulty_challenging">Challenging</string>
+    <string name="difficulty_challenging_desc">Like a promenade with some hills</string>
     <string name="difficulty_hard">Hard</string>
+    <string name="difficulty_hard_desc">Like a promenade. On a rainy day.</string>
     <string name="difficulty_very_hard">Very hard</string>
+    <string name="difficulty_very_hard_desc">Forget your promenade</string>
     <string name="difficulty_frustrating">Frustrating</string>
+    <string name="difficulty_frustrating_desc">Still not enough?</string>
     <string name="cross">Cross</string>
     <string name="circle">Circle</string>
     <string name="empty">Empty</string>

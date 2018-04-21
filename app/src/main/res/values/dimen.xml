@@ -4,4 +4,5 @@
     <dimen name="list_item_padding">16dp</dimen>
     <dimen name="list_item_preview">64dp</dimen>
     <dimen name="list_item_height">96dp</dimen>
+    <dimen name="trophy_size">32dp</dimen>
 </resources>

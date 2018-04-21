@@ -23,19 +23,19 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import java.util.List;
 
 import lu.kremi151.a3dtictactoe.R;
 
-public class GameModeAdapter extends RecyclerView.Adapter<GameModeAdapter.ViewHolder>{
+public class DifficultyAdapter extends RecyclerView.Adapter<DifficultyAdapter.ViewHolder>{
 
-    private final List<Item> items;
+    private final List<? extends Item> items;
     private final LayoutInflater inflater;
 
-    public GameModeAdapter(LayoutInflater inflater, List<Item> items){
+    public DifficultyAdapter(LayoutInflater inflater, List<? extends Item> items){
         this.inflater = inflater;
         this.items = items;
     }
@@ -43,7 +43,7 @@ public class GameModeAdapter extends RecyclerView.Adapter<GameModeAdapter.ViewHo
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(inflater.inflate(R.layout.layout_gamemode_item, parent, false));
+        return new ViewHolder(inflater.inflate(R.layout.layout_difficulty, parent, false));
     }
 
     @Override
@@ -52,7 +52,7 @@ public class GameModeAdapter extends RecyclerView.Adapter<GameModeAdapter.ViewHo
         holder.item = item;
         holder.title.setText(item.titleRes);
         holder.description.setText(item.descriptionRes);
-        holder.preview.setImageResource(item.previewRes);
+        holder.rating.setRating(item.rating);
     }
 
     @Override
@@ -62,14 +62,14 @@ public class GameModeAdapter extends RecyclerView.Adapter<GameModeAdapter.ViewHo
 
     static class ViewHolder extends RecyclerView.ViewHolder{
         private final TextView title, description;
-        private final ImageView preview;
+        private final RatingBar rating;
         private Item item;
 
         public ViewHolder(View itemView) {
             super(itemView);
             this.title = itemView.findViewById(R.id.title);
             this.description = itemView.findViewById(R.id.description);
-            this.preview = itemView.findViewById(R.id.preview);
+            this.rating = itemView.findViewById(R.id.ratingBar);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -81,12 +81,13 @@ public class GameModeAdapter extends RecyclerView.Adapter<GameModeAdapter.ViewHo
     }
 
     public abstract static class Item{
-        private final int titleRes, descriptionRes, previewRes;
+        private final int titleRes, descriptionRes;
+        private final float rating;
 
-        public Item(int titleRes, int descriptionRes, int previewRes){
+        public Item(int titleRes, int descriptionRes, float rating){
             this.titleRes = titleRes;
             this.descriptionRes = descriptionRes;
-            this.previewRes = previewRes;
+            this.rating = rating;
         }
 
         protected abstract void onClick();
