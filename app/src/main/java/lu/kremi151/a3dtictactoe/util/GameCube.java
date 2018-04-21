@@ -21,6 +21,7 @@ package lu.kremi151.a3dtictactoe.util;
 import android.support.annotation.Nullable;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import lu.kremi151.a3dtictactoe.enums.FieldValue;
@@ -29,6 +30,7 @@ public class GameCube {
 
     private final FieldValue cube[][][] = new FieldValue[4][4][4];
     private final List<CubeRow> possibilities;
+    private final LinkedList<Move> history = new LinkedList<>();
 
     public GameCube(){
         for(int x = 0 ; x < width() ; x++){
@@ -49,8 +51,22 @@ public class GameCube {
         return cube[field.getX()][field.getY()][field.getZ()];
     }
 
-    public void setValueAt(int x, int y, int z, FieldValue value){
+    public void setValueAt(int x, int y, int z, FieldValue value, boolean log){
         cube[x][y][z] = value;
+        if(log) history.add(new Move(value, x, y, z));
+    }
+
+    public void setValueAt(int x, int y, int z, FieldValue value){
+        setValueAt(x, y, z, value, true);
+    }
+
+    @Nullable
+    public Move getLastMove(){
+        if(history.size() > 0){
+            return history.getLast();
+        }else{
+            return null;
+        }
     }
 
     public int width(){
@@ -133,5 +149,15 @@ public class GameCube {
         }
         index = Math.min(index, 1.0f);
         return index * index;
+    }
+
+    public class Move extends CubeField{
+
+        private final FieldValue player;
+
+        public Move(FieldValue player, int x, int y, int z) {
+            super(x, y, z);
+            this.player = player;
+        }
     }
 }

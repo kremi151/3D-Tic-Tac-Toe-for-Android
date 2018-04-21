@@ -80,8 +80,12 @@ public abstract class GameMode implements OnBoardTapListener{
         return this.locked;
     }
 
-    public int getFieldColor(int x, int y, int z){
-        return Color.WHITE;
+    public int getFieldColor(int x, int y, int z, int previousColor){
+        return previousColor;
+    }
+
+    public int getFieldValueColor(int x, int y, int z, int previousColor){
+        return previousColor;
     }
 
 }

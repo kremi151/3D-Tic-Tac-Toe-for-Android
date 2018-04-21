@@ -18,8 +18,6 @@
 
 package lu.kremi151.a3dtictactoe.interfaces;
 
-import android.graphics.Paint;
-
 public interface FieldColorInterceptor {
-    Paint getFieldColor(int x, int y, int z, Paint paint);
+    int getFieldColor(int x, int y, int z, int oldColor);
 }

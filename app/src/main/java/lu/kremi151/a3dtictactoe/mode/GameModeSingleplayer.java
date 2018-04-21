@@ -153,9 +153,9 @@ public class GameModeSingleplayer extends GameMode {
     }
 
     @Override
-    public int getFieldColor(int x, int y, int z){
+    public int getFieldColor(int x, int y, int z, int previousColor){
         /*int factor = (int)Math.ceil((255f * mind[x][y][z]) / mindMax);
         return Color.rgb(255, 255 - factor, 255 - factor);*/
-        return super.getFieldColor(x, y, z);
+        return super.getFieldColor(x, y, z, previousColor);
     }
 }

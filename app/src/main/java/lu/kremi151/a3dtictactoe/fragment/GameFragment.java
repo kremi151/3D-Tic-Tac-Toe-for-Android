@@ -72,6 +72,7 @@ public class GameFragment extends Fragment{
         gameBoard.setCube(cube);
         gameBoard.setListener(listener);
         gameBoard.setFieldColorInterceptor(fieldColorInterceptor);
+        gameBoard.setValueColorInterceptor(fieldValueColorInterceptor);
         gameBoard.resume();
     }
 
@@ -96,9 +97,15 @@ public class GameFragment extends Fragment{
 
     private final FieldColorInterceptor fieldColorInterceptor = new FieldColorInterceptor() {
         @Override
-        public Paint getFieldColor(int x, int y, int z, Paint paint) {
-            paint.setColor(gameMode.getFieldColor(x, y, z));
-            return paint;
+        public int getFieldColor(int x, int y, int z, int previousColor) {
+            return gameMode.getFieldColor(x, y, z, previousColor);
+        }
+    };
+
+    private final FieldColorInterceptor fieldValueColorInterceptor = new FieldColorInterceptor() {
+        @Override
+        public int getFieldColor(int x, int y, int z, int previousColor) {
+            return gameMode.getFieldValueColor(x, y, z, previousColor);
         }
     };
 

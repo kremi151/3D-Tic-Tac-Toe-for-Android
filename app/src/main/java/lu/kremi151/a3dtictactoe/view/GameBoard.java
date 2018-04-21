@@ -45,7 +45,7 @@ public class GameBoard extends SurfaceView implements Runnable {
     private int mViewWidth, mViewHeight;
     private float layerSize, layerSpacing, fieldSize;
     private OnBoardTapListener listener;
-    private FieldColorInterceptor fieldColorInterceptor;
+    private FieldColorInterceptor fieldColorInterceptor, valueColorInterceptor;
 
     private GameCube cube = new GameCube();
 
@@ -113,6 +113,10 @@ public class GameBoard extends SurfaceView implements Runnable {
         this.fieldColorInterceptor = interceptor;
     }
 
+    public void setValueColorInterceptor(FieldColorInterceptor interceptor){
+        this.valueColorInterceptor = interceptor;
+    }
+
     @Override
     public void run() {
         Canvas canvas;
@@ -121,6 +125,8 @@ public class GameBoard extends SurfaceView implements Runnable {
                 canvas = mSurfaceHolder.lockCanvas();
                 canvas.save();
                 canvas.drawColor(Color.WHITE);
+
+                GameCube.Move lastMove = cube.getLastMove();
 
                 for(int z = 0 ; z < this.cube.depth() ; z++){
                     for(int x = 0 ; x < this.cube.width() ; x++){
@@ -134,7 +140,7 @@ public class GameBoard extends SurfaceView implements Runnable {
                                 top = (z * layerSpacing) + (y * fieldSize);
                             }
                             if(this.fieldColorInterceptor != null){
-                                Paint fieldContentPaint = this.fieldColorInterceptor.getFieldColor(x, y, z, this.fieldContentPaint);
+                                fieldContentPaint.setColor(this.fieldColorInterceptor.getFieldColor(x, y, z, Color.WHITE));
                                 canvas.drawRect(
                                         left,
                                         top,
@@ -148,6 +154,14 @@ public class GameBoard extends SurfaceView implements Runnable {
                                     left + fieldSize,
                                     top + fieldSize,
                                     fieldPaint);
+                            if(lastMove != null && lastMove.getX() == x && lastMove.getY() == y && lastMove.getZ() == z){
+                                fieldValuePaint.setColor(Color.BLUE);
+                            }else{
+                                fieldValuePaint.setColor(Color.BLACK);
+                            }
+                            if(this.valueColorInterceptor != null){
+                                fieldValuePaint.setColor(valueColorInterceptor.getFieldColor(x, y, z, fieldValuePaint.getColor()));
+                            }
                             switch (cube.valueAt(x, y, z)){
                                 case CIRCLE:
                                     canvas.drawCircle(left + (fieldSize / 2), top + (fieldSize / 2), fieldSize * 0.4f, fieldValuePaint);
@@ -174,6 +188,8 @@ public class GameBoard extends SurfaceView implements Runnable {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
+        w -= 2;
+        h -= 2;
         this.portrait = h >= w;
         this.mViewWidth = w;
         this.mViewHeight = h;
