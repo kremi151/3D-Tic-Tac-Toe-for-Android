@@ -33,6 +33,11 @@ public class GameCube {
     private final LinkedList<Move> history = new LinkedList<>();
 
     public GameCube(){
+        clear();
+        this.possibilities = PossibilitiesCalculator.calculatePossibilities(4);
+    }
+
+    public void clear(){
         for(int x = 0 ; x < width() ; x++){
             for(int y = 0 ; y < height() ; y++){
                 for(int z = 0 ; z < depth() ; z++){
@@ -40,7 +45,7 @@ public class GameCube {
                 }
             }
         }
-        this.possibilities = PossibilitiesCalculator.calculatePossibilities(4);
+        history.clear();
     }
 
     public FieldValue valueAt(int x, int y, int z){

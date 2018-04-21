@@ -20,6 +20,7 @@ package lu.kremi151.a3dtictactoe.util;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 
 import lu.kremi151.a3dtictactoe.R;
@@ -40,6 +41,24 @@ public class AlertHelper {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 onProceed.run();
+                dialog.dismiss();
+            }
+        });
+        return builder.create();
+    }
+
+    public static AlertDialog buildMessageAlert(Context c, int titleRes, int messageRes){
+        return buildMessageAlert(c, titleRes, messageRes, null);
+    }
+
+    public static AlertDialog buildMessageAlert(Context c, int titleRes, int messageRes, @Nullable final Runnable runAfter){
+        AlertDialog.Builder builder = new AlertDialog.Builder(c);
+        builder.setTitle(titleRes);
+        builder.setMessage(messageRes);
+        builder.setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(runAfter != null) runAfter.run();
                 dialog.dismiss();
             }
         });

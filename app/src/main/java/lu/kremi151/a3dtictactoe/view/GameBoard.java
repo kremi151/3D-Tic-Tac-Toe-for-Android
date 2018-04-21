@@ -26,6 +26,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import lu.kremi151.a3dtictactoe.R;
 import lu.kremi151.a3dtictactoe.interfaces.FieldColorInterceptor;
 import lu.kremi151.a3dtictactoe.interfaces.OnBoardTapListener;
 import lu.kremi151.a3dtictactoe.util.GameCube;
@@ -40,6 +41,8 @@ public class GameBoard extends View {
     private float layerSize, layerSpacing, fieldSize;
     private OnBoardTapListener listener;
     private FieldColorInterceptor fieldColorInterceptor, valueColorInterceptor;
+
+    private int fieldColorDefault;
 
     private GameCube cube = new GameCube();
 
@@ -70,12 +73,14 @@ public class GameBoard extends View {
 
     private void init(Context context) {
         mContext = context;
+        fieldColorDefault = context.getResources().getColor(R.color.fieldColor);
         fieldPaint = new Paint();
         fieldPaint.setColor(Color.DKGRAY);
         fieldPaint.setStrokeWidth(1);
         fieldPaint.setStyle(Paint.Style.STROKE);
         fieldValuePaint = new Paint(fieldPaint);
         fieldValuePaint.setStrokeWidth(4);
+        fieldValuePaint.setAntiAlias(true);
         fieldContentPaint = new Paint();
         fieldContentPaint.setColor(Color.WHITE);
         fieldContentPaint.setStyle(Paint.Style.FILL);
@@ -130,7 +135,7 @@ public class GameBoard extends View {
                             top + fieldSize,
                             fieldPaint);
                     if(this.valueColorInterceptor != null){
-                        fieldValuePaint.setColor(valueColorInterceptor.getFieldColor(x, y, z, Color.BLACK));
+                        fieldValuePaint.setColor(valueColorInterceptor.getFieldColor(x, y, z, fieldColorDefault));
                     }
                     switch (cube.valueAt(x, y, z)){
                         case CIRCLE:

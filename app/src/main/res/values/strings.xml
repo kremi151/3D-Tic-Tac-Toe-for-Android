@@ -4,6 +4,8 @@
     <string name="gm_multi_local_desc">Player vs. Player on one device</string>
     <string name="gm_single">Singleplayer</string>
     <string name="gm_single_desc">Player vs. CPU</string>
+    <string name="gm_tutorial">Tutorial</string>
+    <string name="gm_tutorial_desc">Learn the basics of 3D Tic Tac Toe</string>
     <string name="choose_difficulty">Choose your difficulty</string>
     <string name="difficulty_very_easy">Very easy</string>
     <string name="difficulty_very_easy_desc">Like a little promenade</string>
@@ -27,4 +29,10 @@
     <string name="opponent_thinking">%s is thinking...</string>
     <string name="game_ongoing">Game still ongoing</string>
     <string name="end_game_confirm">A game is still ongoing. Do you really want to end it?</string>
+    <string name="tutorial_objective">New objective</string>
+    <string name="tutorial_objective_success">Objective accomplished</string>
+    <string name="tutorial_build_row">Build a row to win</string>
+    <string name="tutorial_build_row_fail">Not quite, try to build a row of 4 fields to win</string>
+    <string name="tutorial_build_row_success">You won by building a row of 4 fields!</string>
+    <string name="tutorial_complete">You have completed the tutorial!</string>
 </resources>

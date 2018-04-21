@@ -52,6 +52,21 @@ public class WelcomeFragment extends Fragment {
                 this.getLayoutInflater(),
                 Arrays.asList(
                         new GameModeAdapter.Item(
+                                R.string.gm_tutorial,
+                                R.string.gm_tutorial_desc,
+                                R.drawable.ic_school_black_24dp
+                        ){
+
+                            @Override
+                            protected void onClick() {
+                                getFragmentManager()
+                                        .beginTransaction()
+                                        .add(R.id.container, GameFragment.newTutorial())
+                                        .addToBackStack(null)
+                                        .commit();
+                            }
+                        },
+                        new GameModeAdapter.Item(
                                 R.string.gm_single,
                                 R.string.gm_single_desc,
                                 R.drawable.ic_person_black_24dp

@@ -5,4 +5,9 @@
     <color name="colorAccent">#FF5722</color>
     <color name="previewIconSecondary">#cecece</color>
     <color name="windowBackground">#fff</color>
+
+    <color name="fieldColor">#000</color>
+    <color name="fieldHighlightLast">#2962FF</color>
+    <color name="fieldHighlightWinning">#64DD17</color>
+    <color name="fieldBackgroundHint">#B2EBF2</color>
 </resources>

@@ -33,6 +33,7 @@ import lu.kremi151.a3dtictactoe.interfaces.OnBoardTapListener;
 import lu.kremi151.a3dtictactoe.mode.GameMode;
 import lu.kremi151.a3dtictactoe.mode.GameModeLocalMultiplayer;
 import lu.kremi151.a3dtictactoe.mode.GameModeSingleplayer;
+import lu.kremi151.a3dtictactoe.mode.GameModeTutorial;
 import lu.kremi151.a3dtictactoe.util.AlertHelper;
 import lu.kremi151.a3dtictactoe.util.GameCube;
 import lu.kremi151.a3dtictactoe.view.GameBoard;
@@ -48,15 +49,20 @@ public class GameFragment extends BaseFragment{
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        if(getArguments() != null){
-            switch(getArguments().getString("gameMode", "multi_local")){
+        if(getArguments() != null) {
+            switch (getArguments().getString("gameMode", "multi_local")) {
                 case "single":
                     gameMode = new GameModeSingleplayer(activityInterface, cube)
                             .setAttack(getArguments().getFloat("attack", 0.5f))
                             .setDefense(getArguments().getFloat("defense", 0.5f))
                             .setPreferencesIdentifier(getArguments().getString("identifier", null));
                     break;
-                default: gameMode = new GameModeLocalMultiplayer(activityInterface, cube); break;
+                case "tutorial":
+                    gameMode = new GameModeTutorial(activityInterface, cube);
+                    break;
+                default:
+                    gameMode = new GameModeLocalMultiplayer(activityInterface, cube);
+                    break;
             }
         }else{
             gameMode = new GameModeLocalMultiplayer(activityInterface, cube);
@@ -170,6 +176,14 @@ public class GameFragment extends BaseFragment{
             getActivity().runOnUiThread(runnable);
         }
     };
+
+    public static final GameFragment newTutorial(){
+        GameFragment fragment = new GameFragment();
+        Bundle args = new Bundle();
+        args.putString("gameMode", "tutorial");
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     public static final GameFragment newLocalMultiplayer(){
         GameFragment fragment = new GameFragment();

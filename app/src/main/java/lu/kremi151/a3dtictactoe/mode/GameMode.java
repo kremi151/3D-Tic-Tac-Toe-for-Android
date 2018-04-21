@@ -36,9 +36,15 @@ public abstract class GameMode implements OnBoardTapListener{
     private boolean locked = false;
     private CubeRow winningRow = null;
 
+    protected final int fieldColorDefault, fieldColorWin, fieldColorLast;
+
     public GameMode(ActivityInterface activity, GameCube cube){
         this.cube = cube;
         this.activity = activity;
+
+        this.fieldColorDefault = getColor(R.color.fieldColor);
+        this.fieldColorWin = getColor(R.color.fieldHighlightWinning);
+        this.fieldColorLast = getColor(R.color.fieldHighlightLast);
     }
 
     protected final GameCube getCube(){
@@ -50,18 +56,21 @@ public abstract class GameMode implements OnBoardTapListener{
     }
 
     protected final boolean announceWinner(){
+        return announceWinner(true);
+    }
+
+    protected final boolean announceWinner(boolean showAlert){
         winningRow = cube.searchWinningRow();
         if(winningRow != null){
             FieldValue winner = cube.evaluateRow(winningRow);
             final String message = getContext().getString(R.string.player_won, getContext().getString(winner.getTitleResource()));
-            new AlertDialog.Builder(getContext())
-                    .setTitle(R.string.game_finished)
-                    .setMessage(message)
-                    .create()
-                    .show();
+            if(showAlert) new AlertDialog.Builder(getContext())
+                            .setTitle(R.string.game_finished)
+                            .setMessage(message)
+                            .create()
+                            .show();
             activity.setSubtitle(message);
             lockGame(true);
-            //TODO: Announce
             return true;
         }else{
             return false;
@@ -113,14 +122,18 @@ public abstract class GameMode implements OnBoardTapListener{
 
     public int getFieldValueColor(int x, int y, int z, int previousColor){
         if(winningRow != null && winningRow.contains(x, y, z)) {
-            return Color.GREEN;
+            return fieldColorWin;
         }else if(cube.hasMoves()){
             final GameCube.Move move = cube.getLastMove();
             if(move.getX() == x && move.getY() == y && move.getZ() == z){
-                return Color.BLUE;
+                return fieldColorLast;
             }
         }
         return previousColor;
+    }
+
+    protected final int getColor(int colorRes){
+        return activity.getContext().getResources().getColor(colorRes);
     }
 
     public abstract void onInit();
