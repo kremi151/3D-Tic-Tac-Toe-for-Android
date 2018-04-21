@@ -34,6 +34,7 @@ public abstract class GameMode implements OnBoardTapListener{
     protected final GameCube cube;
     private final ActivityInterface activity;
     private boolean locked = false;
+    private CubeRow winningRow = null;
 
     public GameMode(ActivityInterface activity, GameCube cube){
         this.cube = cube;
@@ -49,7 +50,7 @@ public abstract class GameMode implements OnBoardTapListener{
     }
 
     protected final boolean announceWinner(){
-        CubeRow winningRow = cube.searchWinningRow();
+        winningRow = cube.searchWinningRow();
         if(winningRow != null){
             FieldValue winner = cube.evaluateRow(winningRow);
             final String message = getContext().getString(R.string.player_won, getContext().getString(winner.getTitleResource()));
@@ -95,7 +96,11 @@ public abstract class GameMode implements OnBoardTapListener{
     }
 
     public int getFieldValueColor(int x, int y, int z, int previousColor){
-        return previousColor;
+        if(winningRow != null && winningRow.contains(x, y, z)){
+            return Color.GREEN;
+        }else{
+            return previousColor;
+        }
     }
 
     public abstract void onInit();

@@ -62,4 +62,14 @@ public class CubeRow {
     public boolean contains(CubeField field){
         return a.equals(field) || b.equals(field) || c.equals(field) || d.equals(field);
     }
+
+    public boolean contains(int x, int y, int z){
+        for(int i = 0 ; i < fieldCount() ; i++){
+            CubeField field = getField(i);
+            if(field.getX() == x && field.getY() == y && field.getZ() == z){
+                return true;
+            }
+        }
+        return false;
+    }
 }
