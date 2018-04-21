@@ -83,12 +83,24 @@ public abstract class GameMode implements OnBoardTapListener{
         activity.setSubtitle(R.string.player_turn, activity.getContext().getString(player.getTitleResource()));
     }
 
-    protected void lockGame(boolean v){
+    protected final void announceThinking(FieldValue player){
+        activity.setSubtitle(R.string.opponent_thinking, activity.getContext().getString(player.getTitleResource()));
+    }
+
+    protected final void lockGame(boolean v){
         this.locked = v;
     }
 
-    public boolean isLocked(){
+    public final boolean isLocked(){
         return this.locked;
+    }
+
+    protected final void updateBoard(){
+        this.activity.updateBoard();
+    }
+
+    protected final void enqueueTask(Runnable runnable){
+        this.activity.enqueueTask(runnable);
     }
 
     public int getFieldColor(int x, int y, int z, int previousColor){

@@ -105,53 +105,9 @@ public class GameModeSingleplayer extends GameMode {
         if(cube.valueAt(x, y, z) == FieldValue.EMPTY){
             cube.setValueAt(x, y, z, player);
             if(!announceWinner()){
-                announceNextPlayer(player.opposite());
-                resetMind();
-                Iterator<CubeRow> it = possibilities.iterator();
-                while(it.hasNext()){
-                    CubeRow row = it.next();
-
-                    final float probability = Math.min(1f, rowProbability(row));
-                    if(probability == 0.0f){
-                        it.remove();
-                    }else{
-                        for(int fieldIndex = 0 ; fieldIndex < row.fieldCount() ; fieldIndex++){
-                            CubeField field = row.getField(fieldIndex);
-                            float value = mind[field.getX()][field.getY()][field.getZ()];
-                            value = Math.max(value, probability);
-                            mind[field.getX()][field.getY()][field.getZ()] = value;
-                            if(value > mindMax){
-                                mindMax = value;
-                            }
-                        }
-                    }
-                }
-
-                CubeField targetField = findEmptyField();
-                if(targetField != null){
-                    int targetX = targetField.getX();
-                    int targetY = targetField.getY();
-                    int targetZ = targetField.getZ();
-                    float highestChance = mind[targetX][targetY][targetZ];
-                    for(int mx = 0 ; mx < cube.width() ; mx++){
-                        for(int my = 0 ; my < cube.height() ; my++){
-                            for(int mz = 0 ; mz < cube.depth() ; mz++){
-                                if(mind[mx][my][mz] > highestChance && cube.valueAt(mx, my, mz) == FieldValue.EMPTY){
-                                    targetX = mx;
-                                    targetY = my;
-                                    targetZ = mz;
-                                    highestChance = mind[mx][my][mz];
-                                }
-                            }
-                        }
-                    }
-                    cube.setValueAt(targetX, targetY, targetZ, player.opposite());
-                    if(!announceWinner()){
-                        announceNextPlayer(player);
-                    }
-                }else{
-                    giveUp(player.opposite());
-                }
+                announceThinking(player.opposite());
+                lockGame(true);
+                new ThinkerThread().start();
             }
             return true;
         }
@@ -163,5 +119,68 @@ public class GameModeSingleplayer extends GameMode {
         /*int factor = (int)Math.ceil((255f * mind[x][y][z]) / mindMax);
         return Color.rgb(255, 255 - factor, 255 - factor);*/
         return super.getFieldColor(x, y, z, previousColor);
+    }
+
+    private class ThinkerThread extends Thread{
+
+        @Override
+        public void run(){
+            resetMind();
+            Iterator<CubeRow> it = possibilities.iterator();
+            while(it.hasNext()){
+                CubeRow row = it.next();
+
+                final float probability = Math.min(1f, rowProbability(row));
+                if(probability == 0.0f){
+                    it.remove();
+                }else{
+                    for(int fieldIndex = 0 ; fieldIndex < row.fieldCount() ; fieldIndex++){
+                        CubeField field = row.getField(fieldIndex);
+                        float value = mind[field.getX()][field.getY()][field.getZ()];
+                        value = Math.max(value, probability);
+                        mind[field.getX()][field.getY()][field.getZ()] = value;
+                        if(value > mindMax){
+                            mindMax = value;
+                        }
+                    }
+                }
+            }
+
+            CubeField targetField = findEmptyField();
+            if(targetField != null){
+                int targetX = targetField.getX();
+                int targetY = targetField.getY();
+                int targetZ = targetField.getZ();
+                float highestChance = mind[targetX][targetY][targetZ];
+                for(int mx = 0 ; mx < cube.width() ; mx++){
+                    for(int my = 0 ; my < cube.height() ; my++){
+                        for(int mz = 0 ; mz < cube.depth() ; mz++){
+                            if(mind[mx][my][mz] > highestChance && cube.valueAt(mx, my, mz) == FieldValue.EMPTY){
+                                targetX = mx;
+                                targetY = my;
+                                targetZ = mz;
+                                highestChance = mind[mx][my][mz];
+                            }
+                        }
+                    }
+                }
+                final int _targetX = targetX;
+                final int _targetY = targetY;
+                final int _targetZ = targetZ;
+                enqueueTask(new Runnable() {
+                    @Override
+                    public void run() {
+                        cube.setValueAt(_targetX, _targetY, _targetZ, player.opposite());
+                        if(!announceWinner()){
+                            announceNextPlayer(player);
+                            lockGame(false);
+                        }
+                        updateBoard();
+                    }
+                });
+            }else{
+                giveUp(player.opposite());
+            }
+        }
     }
 }

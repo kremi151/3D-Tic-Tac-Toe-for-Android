@@ -25,4 +25,6 @@ public interface ActivityInterface {
     void setSubtitle(int subtitle, Object... args);
     void setSubtitle(CharSequence subtitle);
     Context getContext();
+    void updateBoard();
+    void enqueueTask(Runnable runnable);
 }

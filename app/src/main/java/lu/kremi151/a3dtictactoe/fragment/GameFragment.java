@@ -128,6 +128,16 @@ public class GameFragment extends Fragment{
         public Context getContext() {
             return GameFragment.this.getContext();
         }
+
+        @Override
+        public void updateBoard() {
+            gameBoard.invalidate();
+        }
+
+        @Override
+        public void enqueueTask(Runnable runnable) {
+            getActivity().runOnUiThread(runnable);
+        }
     };
 
     public static final GameFragment newLocalMultiplayer(){

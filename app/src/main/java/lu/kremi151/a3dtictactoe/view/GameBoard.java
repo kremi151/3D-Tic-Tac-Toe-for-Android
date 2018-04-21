@@ -22,24 +22,18 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
+import android.view.View;
 
-import lu.kremi151.a3dtictactoe.enums.FieldValue;
 import lu.kremi151.a3dtictactoe.interfaces.FieldColorInterceptor;
 import lu.kremi151.a3dtictactoe.interfaces.OnBoardTapListener;
 import lu.kremi151.a3dtictactoe.util.GameCube;
 
-public class GameBoard extends SurfaceView implements Runnable {
+public class GameBoard extends View {
 
     private Context mContext;
-    private SurfaceHolder mSurfaceHolder;
     private Paint fieldPaint, fieldContentPaint, fieldValuePaint;
-    private boolean mRunning;
-    private Thread mGameThread;
 
     private boolean portrait;
     private int mViewWidth, mViewHeight;
@@ -76,7 +70,6 @@ public class GameBoard extends SurfaceView implements Runnable {
 
     private void init(Context context) {
         mContext = context;
-        mSurfaceHolder = getHolder();
         fieldPaint = new Paint();
         fieldPaint.setColor(Color.DKGRAY);
         fieldPaint.setStrokeWidth(1);
@@ -88,22 +81,9 @@ public class GameBoard extends SurfaceView implements Runnable {
         fieldContentPaint.setStyle(Paint.Style.FILL);
     }
 
-    public void pause() {
-        mRunning = false;
-        try {
-            // Stop the thread (rejoin the main thread)
-            mGameThread.join();
-        } catch (InterruptedException e) {
-        }
-    }
+    public void pause() {}
 
-    public void resume() {
-        if(!mRunning){
-            mRunning = true;
-            mGameThread = new Thread(this);
-            mGameThread.start();
-        }
-    }
+    public void resume() {}
 
     public void setListener(OnBoardTapListener listener){
         this.listener = listener;
@@ -118,59 +98,53 @@ public class GameBoard extends SurfaceView implements Runnable {
     }
 
     @Override
-    public void run() {
-        Canvas canvas;
-        while(mRunning){
-            if (mSurfaceHolder.getSurface().isValid()) {
-                canvas = mSurfaceHolder.lockCanvas();
-                canvas.save();
-                canvas.drawColor(Color.WHITE);
+    protected void onDraw(Canvas canvas) {
+        canvas.save();
+        canvas.drawColor(Color.WHITE);
+        canvas.translate(1f, 1f);
 
-                for(int z = 0 ; z < this.cube.depth() ; z++){
-                    for(int x = 0 ; x < this.cube.width() ; x++){
-                        for(int y = 0 ; y < this.cube.height() ; y++){
-                            float left, top;
-                            if(portrait){
-                                left = (z * layerSpacing) + (x * fieldSize);
-                                top = (z * layerSize) + (y * fieldSize);
-                            }else{
-                                left = (z * layerSize) + (x * fieldSize);
-                                top = (z * layerSpacing) + (y * fieldSize);
-                            }
-                            if(this.fieldColorInterceptor != null){
-                                fieldContentPaint.setColor(this.fieldColorInterceptor.getFieldColor(x, y, z, Color.WHITE));
-                                canvas.drawRect(
-                                        left,
-                                        top,
-                                        left + fieldSize,
-                                        top + fieldSize,
-                                        fieldContentPaint);
-                            }
-                            canvas.drawRect(
-                                    left,
-                                    top,
-                                    left + fieldSize,
-                                    top + fieldSize,
-                                    fieldPaint);
-                            if(this.valueColorInterceptor != null){
-                                fieldValuePaint.setColor(valueColorInterceptor.getFieldColor(x, y, z, Color.BLACK));
-                            }
-                            switch (cube.valueAt(x, y, z)){
-                                case CIRCLE:
-                                    canvas.drawCircle(left + (fieldSize / 2), top + (fieldSize / 2), fieldSize * 0.4f, fieldValuePaint);
-                                    break;
-                                case CROSS:
-                                    drawCross(canvas, left + (fieldSize * 0.1f), top + (fieldSize * 0.1f), left + (fieldSize * 0.9f), top + (fieldSize * 0.9f), fieldValuePaint);
-                                    break;
-                            }
-                        }
+        for(int z = 0 ; z < this.cube.depth() ; z++){
+            for(int x = 0 ; x < this.cube.width() ; x++){
+                for(int y = 0 ; y < this.cube.height() ; y++){
+                    float left, top;
+                    if(portrait){
+                        left = (z * layerSpacing) + (x * fieldSize);
+                        top = (z * layerSize) + (y * fieldSize);
+                    }else{
+                        left = (z * layerSize) + (x * fieldSize);
+                        top = (z * layerSpacing) + (y * fieldSize);
+                    }
+                    if(this.fieldColorInterceptor != null){
+                        fieldContentPaint.setColor(this.fieldColorInterceptor.getFieldColor(x, y, z, Color.WHITE));
+                        canvas.drawRect(
+                                left,
+                                top,
+                                left + fieldSize,
+                                top + fieldSize,
+                                fieldContentPaint);
+                    }
+                    canvas.drawRect(
+                            left,
+                            top,
+                            left + fieldSize,
+                            top + fieldSize,
+                            fieldPaint);
+                    if(this.valueColorInterceptor != null){
+                        fieldValuePaint.setColor(valueColorInterceptor.getFieldColor(x, y, z, Color.BLACK));
+                    }
+                    switch (cube.valueAt(x, y, z)){
+                        case CIRCLE:
+                            canvas.drawCircle(left + (fieldSize / 2), top + (fieldSize / 2), fieldSize * 0.4f, fieldValuePaint);
+                            break;
+                        case CROSS:
+                            drawCross(canvas, left + (fieldSize * 0.1f), top + (fieldSize * 0.1f), left + (fieldSize * 0.9f), top + (fieldSize * 0.9f), fieldValuePaint);
+                            break;
                     }
                 }
-
-                canvas.restore();
-                mSurfaceHolder.unlockCanvasAndPost(canvas);
             }
         }
+
+        canvas.restore();
     }
 
     private void drawCross(Canvas canvas, float left, float top, float right, float bottom, Paint paint){

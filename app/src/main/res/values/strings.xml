@@ -18,4 +18,5 @@
     <string name="player_won">%s has won!</string>
     <string name="player_gave_up">%s gave up!</string>
     <string name="game_finished">Game finished</string>
+    <string name="opponent_thinking">%s is thinking...</string>
 </resources>
