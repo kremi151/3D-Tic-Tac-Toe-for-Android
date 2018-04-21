@@ -41,6 +41,7 @@ public class GameModeSingleplayer extends GameMode {
     private float defense = 0.5f;
     private final float mind[][][] = new float[cube.width()][cube.height()][cube.depth()];
     private float mindMax = 1.0f;
+    private String prefIdentifier = null;
 
     public GameModeSingleplayer(ActivityInterface activity, GameCube cube) {
         super(activity, cube);
@@ -53,6 +54,21 @@ public class GameModeSingleplayer extends GameMode {
                 }
             }
         }
+    }
+
+    public GameModeSingleplayer setAttack(float attack){
+        this.attack = Math.min(1f, attack);
+        return this;
+    }
+
+    public GameModeSingleplayer setDefense(float defense){
+        this.defense = Math.min(1f, defense);
+        return this;
+    }
+
+    public GameModeSingleplayer setPreferencesIdentifier(String identifier){
+        this.prefIdentifier = identifier;
+        return this;
     }
 
     @Override

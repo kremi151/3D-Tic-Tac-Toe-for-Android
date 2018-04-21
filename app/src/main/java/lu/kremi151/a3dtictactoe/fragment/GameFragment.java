@@ -54,7 +54,12 @@ public class GameFragment extends Fragment{
         super.onCreate(savedInstanceState);
         if(getArguments() != null){
             switch(getArguments().getString("gameMode", "multi_local")){
-                case "single": gameMode = new GameModeSingleplayer(activityInterface, cube); break;
+                case "single":
+                    gameMode = new GameModeSingleplayer(activityInterface, cube)
+                            .setAttack(getArguments().getFloat("attack", 0.5f))
+                            .setDefense(getArguments().getFloat("defense", 0.5f))
+                            .setPreferencesIdentifier(getArguments().getString("identifier", null));
+                    break;
                 default: gameMode = new GameModeLocalMultiplayer(activityInterface, cube); break;
             }
         }else{
@@ -148,12 +153,13 @@ public class GameFragment extends Fragment{
         return fragment;
     }
 
-    public static final GameFragment newSingleplayer(float attack, float defense){
+    public static final GameFragment newSingleplayer(float attack, float defense, String identifier){
         GameFragment fragment = new GameFragment();
         Bundle args = new Bundle();
         args.putString("gameMode", "single");
         args.putFloat("attack", attack);
         args.putFloat("defense", defense);
+        args.putString("identifier", identifier);
         fragment.setArguments(args);
         return fragment;
     }

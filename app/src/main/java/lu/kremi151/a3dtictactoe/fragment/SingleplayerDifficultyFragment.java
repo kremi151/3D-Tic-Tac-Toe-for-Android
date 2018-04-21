@@ -18,6 +18,7 @@
 
 package lu.kremi151.a3dtictactoe.fragment;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,13 +26,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import java.util.Arrays;
 
 import lu.kremi151.a3dtictactoe.R;
+import lu.kremi151.a3dtictactoe.TTTApp;
 import lu.kremi151.a3dtictactoe.adapter.DifficultyAdapter;
-import lu.kremi151.a3dtictactoe.adapter.GameModeAdapter;
 
 public class SingleplayerDifficultyFragment extends Fragment {
 
@@ -50,6 +50,7 @@ public class SingleplayerDifficultyFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
+        SharedPreferences preferences = ((TTTApp)getActivity().getApplication()).getSingleplayerPreferences();
         recyclerView.setAdapter(new DifficultyAdapter(
                 this.getLayoutInflater(),
                 Arrays.asList(
@@ -57,37 +58,43 @@ public class SingleplayerDifficultyFragment extends Fragment {
                                 R.string.difficulty_very_easy,
                                 R.string.difficulty_very_easy_desc,
                                 2.5f,
-                                0.8f
+                                0.8f,
+                                "veasy"
                         ),
                         new SingleplayerDifficulty(
                                 R.string.difficulty_easy,
                                 R.string.difficulty_easy_desc,
                                 3.0f,
-                                0.7f
+                                0.7f,
+                                "easy"
                         ),
                         new SingleplayerDifficulty(
                                 R.string.difficulty_challenging,
                                 R.string.difficulty_challenging_desc,
                                 3.5f,
-                                0.6f
+                                0.6f,
+                                "challenging"
                         ),
                         new SingleplayerDifficulty(
                                 R.string.difficulty_hard,
                                 R.string.difficulty_hard_desc,
                                 4.0f,
-                                0.5f
+                                0.5f,
+                                "hard"
                         ),
                         new SingleplayerDifficulty(
                                 R.string.difficulty_very_hard,
                                 R.string.difficulty_very_hard_desc,
                                 4.5f,
-                                0.4f
+                                0.4f,
+                                "vhard"
                         ),
                         new SingleplayerDifficulty(
                                 R.string.difficulty_frustrating,
                                 R.string.difficulty_frustrating_desc,
                                 5.0f,
-                                0.3f
+                                0.3f,
+                                "mommy"
                         )
                 )
         ));
@@ -96,17 +103,19 @@ public class SingleplayerDifficultyFragment extends Fragment {
     private class SingleplayerDifficulty extends DifficultyAdapter.Item{
 
         private final float attack;
+        private final String identifier;
 
-        public SingleplayerDifficulty(int titleRes, int descriptionRes, float rating, float attack) {
+        public SingleplayerDifficulty(int titleRes, int descriptionRes, float rating, float attack, String identifier) {
             super(titleRes, descriptionRes, rating);
             this.attack = Math.min(1f, attack);
+            this.identifier = identifier;
         }
 
         @Override
         protected void onClick() {
             getFragmentManager()
                     .beginTransaction()
-                    .add(R.id.container, GameFragment.newSingleplayer(attack, 1f - attack))
+                    .add(R.id.container, GameFragment.newSingleplayer(attack, 1f - attack, identifier))
                     .addToBackStack(null)
                     .commit();
         }
