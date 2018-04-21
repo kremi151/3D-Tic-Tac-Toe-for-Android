@@ -18,30 +18,26 @@
 
 package lu.kremi151.a3dtictactoe.fragment;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Paint;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import lu.kremi151.a3dtictactoe.R;
-import lu.kremi151.a3dtictactoe.enums.FieldValue;
 import lu.kremi151.a3dtictactoe.interfaces.ActivityInterface;
 import lu.kremi151.a3dtictactoe.interfaces.FieldColorInterceptor;
 import lu.kremi151.a3dtictactoe.interfaces.OnBoardTapListener;
 import lu.kremi151.a3dtictactoe.mode.GameMode;
 import lu.kremi151.a3dtictactoe.mode.GameModeLocalMultiplayer;
 import lu.kremi151.a3dtictactoe.mode.GameModeSingleplayer;
-import lu.kremi151.a3dtictactoe.util.CubeRow;
+import lu.kremi151.a3dtictactoe.util.AlertHelper;
 import lu.kremi151.a3dtictactoe.util.GameCube;
 import lu.kremi151.a3dtictactoe.view.GameBoard;
 
-public class GameFragment extends Fragment{
+public class GameFragment extends BaseFragment{
 
     private GameBoard gameBoard;
     private GameCube cube = new GameCube();
@@ -95,6 +91,36 @@ public class GameFragment extends Fragment{
     public void onPause() {
         super.onPause();
         gameBoard.pause();
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setSubtitle(null);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case android.R.id.home:
+
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onBackPressed(){
+        if(!gameMode.isGameFinished()){
+            AlertHelper.buildCloseGameAlert(getActivity(), new Runnable() {
+                @Override
+                public void run() {
+                    getFragmentManager().popBackStack();
+                }
+            }).show();
+            return true;
+        }
+        return super.onBackPressed();
     }
 
     private final OnBoardTapListener listener = new OnBoardTapListener() {

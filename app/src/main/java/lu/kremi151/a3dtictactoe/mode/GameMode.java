@@ -95,6 +95,10 @@ public abstract class GameMode implements OnBoardTapListener{
         return this.locked;
     }
 
+    public final boolean isGameFinished(){
+        return winningRow != null;
+    }
+
     protected final void updateBoard(){
         this.activity.updateBoard();
     }

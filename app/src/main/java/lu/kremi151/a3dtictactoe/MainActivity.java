@@ -27,6 +27,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import lu.kremi151.a3dtictactoe.fragment.BaseFragment;
 import lu.kremi151.a3dtictactoe.fragment.GameFragment;
 import lu.kremi151.a3dtictactoe.fragment.SingleplayerDifficultyFragment;
 import lu.kremi151.a3dtictactoe.fragment.WelcomeFragment;
@@ -40,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getSupportActionBar().setHomeAsUpIndicator(0);
     }
 
     @SuppressLint("RestrictedApi")
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onBackStackChanged() {
                 final boolean showHome = getSupportFragmentManager().getBackStackEntryCount() > 0;
-                getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(showHome);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(showHome);
                 getSupportActionBar().setDisplayShowHomeEnabled(showHome);
             }
         });
@@ -73,17 +73,20 @@ public class MainActivity extends AppCompatActivity {
         switch(item.getItemId()){
             case android.R.id.home:
                 onBackPressed();
-                break;
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onBackPressed() {
-        if(getSupportFragmentManager().getBackStackEntryCount() > 1){
-            getSupportFragmentManager().popBackStack();
-        }else{
-            super.onBackPressed();
+        final Fragment top = getSupportFragmentManager().findFragmentById(R.id.container);
+        if(!(top instanceof BaseFragment) || !((BaseFragment)top).onBackPressed()){
+            if(getSupportFragmentManager().getBackStackEntryCount() > 1){
+                getSupportFragmentManager().popBackStack();
+            }else{
+                super.onBackPressed();
+            }
         }
     }
 }
