@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/windowBackground"
     android:padding="@dimen/activity_padding"
     tools:context="lu.kremi151.a3dtictactoe.MainActivity">
 

@@ -18,6 +18,9 @@
 
 package lu.kremi151.a3dtictactoe;
 
+import android.annotation.SuppressLint;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -37,11 +40,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getSupportActionBar().setHomeAsUpIndicator(0);
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     protected void onStart(){
         super.onStart();
+        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                final boolean showHome = getSupportFragmentManager().getBackStackEntryCount() > 0;
+                getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(showHome);
+                getSupportActionBar().setDisplayShowHomeEnabled(showHome);
+            }
+        });
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.container, new WelcomeFragment())
@@ -57,6 +70,20 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case android.R.id.home:
+                onBackPressed();
+                break;
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(getSupportFragmentManager().getBackStackEntryCount() > 1){
+            getSupportFragmentManager().popBackStack();
+        }else{
+            super.onBackPressed();
+        }
     }
 }

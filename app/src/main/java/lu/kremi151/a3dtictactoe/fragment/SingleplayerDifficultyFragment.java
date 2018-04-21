@@ -46,7 +46,8 @@ public class SingleplayerDifficultyFragment extends Fragment {
             public void onClick(View view) {
                 getFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.container, GameFragment.newSingleplayer(0.8f, 0.2f))
+                        .add(R.id.container, GameFragment.newSingleplayer(0.8f, 0.2f))
+                        .addToBackStack(null)
                         .commit();
             }
         });
@@ -55,7 +56,8 @@ public class SingleplayerDifficultyFragment extends Fragment {
             public void onClick(View view) {
                 getFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.container, GameFragment.newSingleplayer(0.7f, 0.3f))
+                        .add(R.id.container, GameFragment.newSingleplayer(0.7f, 0.3f))
+                        .addToBackStack(null)
                         .commit();
             }
         });
@@ -64,7 +66,8 @@ public class SingleplayerDifficultyFragment extends Fragment {
             public void onClick(View view) {
                 getFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.container, GameFragment.newSingleplayer(0.6f, 0.4f))
+                        .add(R.id.container, GameFragment.newSingleplayer(0.6f, 0.4f))
+                        .addToBackStack(null)
                         .commit();
             }
         });
@@ -73,7 +76,8 @@ public class SingleplayerDifficultyFragment extends Fragment {
             public void onClick(View view) {
                 getFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.container, GameFragment.newSingleplayer(0.5f, 0.5f))
+                        .add(R.id.container, GameFragment.newSingleplayer(0.5f, 0.5f))
+                        .addToBackStack(null)
                         .commit();
             }
         });
@@ -82,7 +86,8 @@ public class SingleplayerDifficultyFragment extends Fragment {
             public void onClick(View view) {
                 getFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.container, GameFragment.newSingleplayer(0.4f, 0.6f))
+                        .add(R.id.container, GameFragment.newSingleplayer(0.4f, 0.6f))
+                        .addToBackStack(null)
                         .commit();
             }
         });
@@ -91,7 +96,8 @@ public class SingleplayerDifficultyFragment extends Fragment {
             public void onClick(View view) {
                 getFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.container, GameFragment.newSingleplayer(0.3f, 0.7f))
+                        .add(R.id.container, GameFragment.newSingleplayer(0.3f, 0.7f))
+                        .addToBackStack(null)
                         .commit();
             }
         });

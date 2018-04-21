@@ -20,65 +20,70 @@ package lu.kremi151.a3dtictactoe.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListView;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
-import lu.kremi151.a3dtictactoe.GameModeAdapter;
+import lu.kremi151.a3dtictactoe.adapter.GameModeAdapter;
 import lu.kremi151.a3dtictactoe.R;
 
 public class WelcomeFragment extends Fragment {
 
-    private ListView listView;
+    private RecyclerView recyclerView;
+    private LinearLayoutManager layoutManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        listView = (ListView) inflater.inflate(R.layout.fragment_welcome, container, false);
-        return listView;
+        recyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_welcome, container, false);
+        return recyclerView;
     }
 
     @Override
     public void onStart(){
         super.onStart();
-        listView.setAdapter(new GameModeAdapter(
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(new GameModeAdapter(
                 this.getLayoutInflater(),
                 Arrays.asList(
                         new GameModeAdapter.Item(
                                 R.string.gm_single,
                                 R.string.gm_single_desc,
                                 R.drawable.ic_person_black_24dp
-                        ),
+                        ){
+
+                            @Override
+                            protected void onClick() {
+                                getFragmentManager()
+                                        .beginTransaction()
+                                        .add(R.id.container, new SingleplayerDifficultyFragment())
+                                        .addToBackStack(null)
+                                        .commit();
+                            }
+                        },
                         new GameModeAdapter.Item(
                                 R.string.gm_multi_local,
                                 R.string.gm_multi_local_desc,
                                 R.drawable.ic_people_black_24dp
-                        )
+                        ){
+
+                            @Override
+                            protected void onClick() {
+                                getFragmentManager()
+                                        .beginTransaction()
+                                        .add(R.id.container, GameFragment.newLocalMultiplayer())
+                                        .addToBackStack(null)
+                                        .commit();
+                            }
+                        }
                 )
         ));
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                switch(i){
-                    case 0:
-                        getFragmentManager()
-                                .beginTransaction()
-                                .replace(R.id.container, new SingleplayerDifficultyFragment())
-                                .commit();
-                        break;
-                    case 1:
-                        getFragmentManager()
-                                .beginTransaction()
-                                .replace(R.id.container, GameFragment.newLocalMultiplayer())
-                                .commit();
-                        break;
-                }
-            }
-        });
     }
 
 }
