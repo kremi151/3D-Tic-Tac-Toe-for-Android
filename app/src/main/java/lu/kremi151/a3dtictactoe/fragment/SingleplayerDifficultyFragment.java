@@ -37,6 +37,7 @@ public class SingleplayerDifficultyFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
+    private DifficultyAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,7 +51,7 @@ public class SingleplayerDifficultyFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(new DifficultyAdapter(
+        adapter = new DifficultyAdapter(
                 this.getLayoutInflater(),
                 ((TTTApp)getActivity().getApplication()).getSavegame(),
                 Arrays.asList(
@@ -91,7 +92,14 @@ public class SingleplayerDifficultyFragment extends Fragment {
                                 SingleplayerDifficulty.FRUSTRATING
                         )
                 )
-        ));
+        );
+        recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        adapter.notifyDataSetChanged();
     }
 
     private class SingleplayerDifficultyItem extends DifficultyAdapter.Item{
