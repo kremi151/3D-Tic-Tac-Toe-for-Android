@@ -18,6 +18,7 @@
 
 package lu.kremi151.a3dtictactoe.util;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 
 import lu.kremi151.a3dtictactoe.interfaces.Savegame;
@@ -30,9 +31,10 @@ public class SharedPreferencesSavegame implements Savegame{
         this.prefs = prefs;
     }
 
+    @SuppressLint("ApplySharedPref") //Synchronous handling is wanted here
     @Override
     public void setMastered(String id, boolean mastered) {
-        this.prefs.edit().putBoolean("mastered_" + id, true).apply();
+        this.prefs.edit().putBoolean("mastered_" + id, true).commit();
     }
 
     @Override

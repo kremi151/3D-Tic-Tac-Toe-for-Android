@@ -47,14 +47,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart(){
         super.onStart();
-        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
-            @Override
-            public void onBackStackChanged() {
-                final boolean showHome = getSupportFragmentManager().getBackStackEntryCount() > 0;
-                getSupportActionBar().setDisplayHomeAsUpEnabled(showHome);
-                getSupportActionBar().setDisplayShowHomeEnabled(showHome);
-            }
-        });
+        getSupportFragmentManager().addOnBackStackChangedListener(backStackChangedListener);
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.container, new WelcomeFragment())
@@ -89,4 +82,13 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    private FragmentManager.OnBackStackChangedListener backStackChangedListener = new FragmentManager.OnBackStackChangedListener() {
+        @Override
+        public void onBackStackChanged() {
+            final boolean showHome = getSupportFragmentManager().getBackStackEntryCount() > 0;
+            getSupportActionBar().setDisplayHomeAsUpEnabled(showHome);
+            getSupportActionBar().setDisplayShowHomeEnabled(showHome);
+        }
+    };
 }

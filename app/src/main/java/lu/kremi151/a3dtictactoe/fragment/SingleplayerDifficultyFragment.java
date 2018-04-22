@@ -31,7 +31,7 @@ import java.util.Arrays;
 import lu.kremi151.a3dtictactoe.R;
 import lu.kremi151.a3dtictactoe.TTTApp;
 import lu.kremi151.a3dtictactoe.adapter.DifficultyAdapter;
-import lu.kremi151.a3dtictactoe.util.SingleplayerDifficulty;
+import lu.kremi151.a3dtictactoe.enums.SingleplayerDifficulty;
 
 public class SingleplayerDifficultyFragment extends Fragment {
 

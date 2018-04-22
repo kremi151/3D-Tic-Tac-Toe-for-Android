@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package lu.kremi151.a3dtictactoe.util;
+package lu.kremi151.a3dtictactoe.enums;
 
 public enum SingleplayerDifficulty {
     VERY_EASY("veasy", 0.8f),
