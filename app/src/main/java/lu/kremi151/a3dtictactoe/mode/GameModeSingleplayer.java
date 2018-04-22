@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Random;
 
 import lu.kremi151.a3dtictactoe.enums.FieldValue;
+import lu.kremi151.a3dtictactoe.interfaces.Acceptor;
 import lu.kremi151.a3dtictactoe.interfaces.ActivityInterface;
 import lu.kremi151.a3dtictactoe.util.CubeField;
 import lu.kremi151.a3dtictactoe.util.CubeRow;
@@ -41,7 +42,8 @@ public class GameModeSingleplayer extends GameMode {
     private float defense = 0.5f;
     private final float mind[][][] = new float[cube.width()][cube.height()][cube.depth()];
     private float mindMax = 1.0f;
-    private String prefIdentifier = null;
+    private String tag = null;
+    private Acceptor<GameModeSingleplayer> onWinListener = null;
 
     public GameModeSingleplayer(ActivityInterface activity, GameCube cube) {
         super(activity, cube);
@@ -66,9 +68,19 @@ public class GameModeSingleplayer extends GameMode {
         return this;
     }
 
-    public GameModeSingleplayer setPreferencesIdentifier(String identifier){
-        this.prefIdentifier = identifier;
+    public GameModeSingleplayer setTag(String tag){
+        this.tag = tag;
         return this;
+    }
+
+    public GameModeSingleplayer setOnWinListener(Acceptor<GameModeSingleplayer> listener){
+        this.onWinListener = listener;
+        return this;
+    }
+
+    @Nullable
+    public String getTag(){
+        return tag;
     }
 
     @Override
@@ -124,6 +136,8 @@ public class GameModeSingleplayer extends GameMode {
                 announceThinking(player.opposite());
                 lockGame(true);
                 new ThinkerThread().start();
+            }else if(this.onWinListener != null){
+                this.onWinListener.onAccept(this);
             }
             return true;
         }

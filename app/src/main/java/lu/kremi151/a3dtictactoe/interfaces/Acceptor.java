@@ -18,15 +18,8 @@
 
 package lu.kremi151.a3dtictactoe.interfaces;
 
-import android.content.Context;
+public interface Acceptor<T> {
 
-public interface ActivityInterface {
-
-    void setSubtitle(int subtitle, Object... args);
-    void setSubtitle(CharSequence subtitle);
-    Context getContext();
-    void updateBoard();
-    void enqueueTask(Runnable runnable);
-    Savegame getSavegame();
+    void onAccept(T obj);
 
 }

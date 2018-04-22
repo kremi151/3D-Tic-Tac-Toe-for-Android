@@ -18,15 +18,9 @@
 
 package lu.kremi151.a3dtictactoe.interfaces;
 
-import android.content.Context;
+public interface Savegame {
 
-public interface ActivityInterface {
-
-    void setSubtitle(int subtitle, Object... args);
-    void setSubtitle(CharSequence subtitle);
-    Context getContext();
-    void updateBoard();
-    void enqueueTask(Runnable runnable);
-    Savegame getSavegame();
+    void setMastered(String id, boolean mastered);
+    boolean hasMastered(String id);
 
 }

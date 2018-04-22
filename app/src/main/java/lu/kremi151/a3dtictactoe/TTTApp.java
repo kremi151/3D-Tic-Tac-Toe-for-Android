@@ -21,18 +21,21 @@ package lu.kremi151.a3dtictactoe;
 import android.app.Application;
 import android.content.SharedPreferences;
 
+import lu.kremi151.a3dtictactoe.interfaces.Savegame;
+import lu.kremi151.a3dtictactoe.util.SharedPreferencesSavegame;
+
 public class TTTApp extends Application{
 
-    private SharedPreferences preferences;
+    private Savegame savegame;
 
     @Override
     public void onCreate(){
         super.onCreate();
-        this.preferences = getSharedPreferences("3dtitato.sp.progress", MODE_PRIVATE);
+        this.savegame = new SharedPreferencesSavegame(getSharedPreferences("3dtitato.save", MODE_PRIVATE));
     }
 
-    public SharedPreferences getSingleplayerPreferences(){
-        return preferences;
+    public Savegame getSavegame(){
+        return savegame;
     }
 
 }

@@ -26,6 +26,7 @@ import lu.kremi151.a3dtictactoe.R;
 import lu.kremi151.a3dtictactoe.enums.FieldValue;
 import lu.kremi151.a3dtictactoe.interfaces.ActivityInterface;
 import lu.kremi151.a3dtictactoe.interfaces.OnBoardTapListener;
+import lu.kremi151.a3dtictactoe.interfaces.Savegame;
 import lu.kremi151.a3dtictactoe.util.CubeRow;
 import lu.kremi151.a3dtictactoe.util.GameCube;
 
@@ -53,6 +54,10 @@ public abstract class GameMode implements OnBoardTapListener{
 
     protected final Context getContext(){
         return activity.getContext();
+    }
+
+    public final Savegame getSavegame(){
+        return activity.getSavegame();
     }
 
     protected final boolean announceWinner(){

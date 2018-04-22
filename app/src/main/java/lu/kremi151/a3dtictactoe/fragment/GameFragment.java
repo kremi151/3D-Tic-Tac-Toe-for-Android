@@ -19,6 +19,7 @@
 package lu.kremi151.a3dtictactoe.fragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -27,9 +28,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import lu.kremi151.a3dtictactoe.R;
+import lu.kremi151.a3dtictactoe.TTTApp;
+import lu.kremi151.a3dtictactoe.interfaces.Acceptor;
 import lu.kremi151.a3dtictactoe.interfaces.ActivityInterface;
 import lu.kremi151.a3dtictactoe.interfaces.FieldColorInterceptor;
 import lu.kremi151.a3dtictactoe.interfaces.OnBoardTapListener;
+import lu.kremi151.a3dtictactoe.interfaces.Savegame;
 import lu.kremi151.a3dtictactoe.mode.GameMode;
 import lu.kremi151.a3dtictactoe.mode.GameModeLocalMultiplayer;
 import lu.kremi151.a3dtictactoe.mode.GameModeSingleplayer;
@@ -55,7 +59,15 @@ public class GameFragment extends BaseFragment{
                     gameMode = new GameModeSingleplayer(activityInterface, cube)
                             .setAttack(getArguments().getFloat("attack", 0.5f))
                             .setDefense(getArguments().getFloat("defense", 0.5f))
-                            .setPreferencesIdentifier(getArguments().getString("identifier", null));
+                            .setTag(getArguments().getString("tag", null))
+                            .setOnWinListener(new Acceptor<GameModeSingleplayer>() {
+                                @Override
+                                public void onAccept(GameModeSingleplayer game) {
+                                    if(game.getTag() != null){
+                                        game.getSavegame().setMastered(game.getTag(), true);
+                                    }
+                                }
+                            });
                     break;
                 case "tutorial":
                     gameMode = new GameModeTutorial(activityInterface, cube);
@@ -175,6 +187,11 @@ public class GameFragment extends BaseFragment{
         public void enqueueTask(Runnable runnable) {
             getActivity().runOnUiThread(runnable);
         }
+
+        @Override
+        public Savegame getSavegame() {
+            return ((TTTApp)getActivity().getApplication()).getSavegame();
+        }
     };
 
     public static final GameFragment newTutorial(){
@@ -193,13 +210,13 @@ public class GameFragment extends BaseFragment{
         return fragment;
     }
 
-    public static final GameFragment newSingleplayer(float attack, float defense, String identifier){
+    public static final GameFragment newSingleplayer(float attack, float defense, String tag){
         GameFragment fragment = new GameFragment();
         Bundle args = new Bundle();
         args.putString("gameMode", "single");
         args.putFloat("attack", attack);
         args.putFloat("defense", defense);
-        args.putString("identifier", identifier);
+        args.putString("tag", tag);
         fragment.setArguments(args);
         return fragment;
     }

@@ -16,17 +16,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package lu.kremi151.a3dtictactoe.interfaces;
+package lu.kremi151.a3dtictactoe.util;
 
-import android.content.Context;
+import android.content.SharedPreferences;
 
-public interface ActivityInterface {
+import lu.kremi151.a3dtictactoe.interfaces.Savegame;
 
-    void setSubtitle(int subtitle, Object... args);
-    void setSubtitle(CharSequence subtitle);
-    Context getContext();
-    void updateBoard();
-    void enqueueTask(Runnable runnable);
-    Savegame getSavegame();
+public class SharedPreferencesSavegame implements Savegame{
 
+    private final SharedPreferences prefs;
+
+    public SharedPreferencesSavegame(SharedPreferences prefs){
+        this.prefs = prefs;
+    }
+
+    @Override
+    public void setMastered(String id, boolean mastered) {
+        this.prefs.edit().putBoolean("mastered_" + id, true).apply();
+    }
+
+    @Override
+    public boolean hasMastered(String id) {
+        return this.prefs.getBoolean("mastered_" + id, false);
+    }
 }

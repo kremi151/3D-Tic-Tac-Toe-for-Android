@@ -23,20 +23,24 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import java.util.List;
 
 import lu.kremi151.a3dtictactoe.R;
+import lu.kremi151.a3dtictactoe.interfaces.Savegame;
 
 public class DifficultyAdapter extends RecyclerView.Adapter<DifficultyAdapter.ViewHolder>{
 
     private final List<? extends Item> items;
     private final LayoutInflater inflater;
+    private final Savegame savegame;
 
-    public DifficultyAdapter(LayoutInflater inflater, List<? extends Item> items){
+    public DifficultyAdapter(LayoutInflater inflater, Savegame savegame, List<? extends Item> items){
         this.inflater = inflater;
+        this.savegame = savegame;
         this.items = items;
     }
 
@@ -53,6 +57,7 @@ public class DifficultyAdapter extends RecyclerView.Adapter<DifficultyAdapter.Vi
         holder.title.setText(item.titleRes);
         holder.description.setText(item.descriptionRes);
         holder.rating.setRating(item.rating);
+        holder.trophy.setVisibility((item.tag != null && savegame.hasMastered(item.tag)) ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Override
@@ -63,6 +68,7 @@ public class DifficultyAdapter extends RecyclerView.Adapter<DifficultyAdapter.Vi
     static class ViewHolder extends RecyclerView.ViewHolder{
         private final TextView title, description;
         private final RatingBar rating;
+        private final ImageView trophy;
         private Item item;
 
         public ViewHolder(View itemView) {
@@ -70,6 +76,7 @@ public class DifficultyAdapter extends RecyclerView.Adapter<DifficultyAdapter.Vi
             this.title = itemView.findViewById(R.id.title);
             this.description = itemView.findViewById(R.id.description);
             this.rating = itemView.findViewById(R.id.ratingBar);
+            this.trophy = itemView.findViewById(R.id.trophy);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -83,11 +90,17 @@ public class DifficultyAdapter extends RecyclerView.Adapter<DifficultyAdapter.Vi
     public abstract static class Item{
         private final int titleRes, descriptionRes;
         private final float rating;
+        protected String tag = null;
 
         public Item(int titleRes, int descriptionRes, float rating){
             this.titleRes = titleRes;
             this.descriptionRes = descriptionRes;
             this.rating = rating;
+        }
+
+        public Item setTag(String tag){
+            this.tag = tag;
+            return this;
         }
 
         protected abstract void onClick();
