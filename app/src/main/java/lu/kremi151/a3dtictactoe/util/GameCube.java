@@ -78,16 +78,23 @@ public class GameCube {
         return history.size() > 0;
     }
 
+    public int dimension(){
+        return 4;
+    }
+
+    @Deprecated
     public int width(){
-        return 4;
+        return dimension();
     }
 
+    @Deprecated
     public int height(){
-        return 4;
+        return dimension();
     }
 
+    @Deprecated
     public int depth(){
-        return 4;
+        return dimension();
     }
 
     public List<CubeRow> getRows(){

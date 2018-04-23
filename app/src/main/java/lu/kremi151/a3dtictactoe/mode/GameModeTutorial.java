@@ -18,7 +18,9 @@
 
 package lu.kremi151.a3dtictactoe.mode;
 
-import android.graphics.Color;
+import android.support.annotation.Nullable;
+
+import java.util.Random;
 
 import lu.kremi151.a3dtictactoe.R;
 import lu.kremi151.a3dtictactoe.enums.FieldValue;
@@ -30,8 +32,57 @@ import lu.kremi151.a3dtictactoe.util.GameCube;
 
 public class GameModeTutorial extends GameMode {
 
+    private final Objective LESSON_6 = new ObjectiveRow(
+            new CubeRow(
+                    new CubeField(3, 0, 0),
+                    new CubeField(2, 0, 1),
+                    new CubeField(1, 0, 2),
+                    new CubeField(0, 0, 3)
+            ), false);
+
+    private final Objective LESSON_5 = new ObjectiveRow(
+            new CubeRow(
+                    new CubeField(0, 0, 0),
+                    new CubeField(1, 1, 1),
+                    new CubeField(2, 2, 2),
+                    new CubeField(3, 3, 3)
+            ), false).setNextObjective(LESSON_6);
+
+    private final Objective LESSON_4 = new ObjectiveRow(
+            new CubeRow(
+                    new CubeField(0, 0, 0),
+                    new CubeField(0, 0, 1),
+                    new CubeField(0, 0, 2),
+                    new CubeField(0, 0, 3)
+            ), false).setNextObjective(LESSON_5);
+
+    private final Objective LESSON_3 = new ObjectiveRow(
+            new CubeRow(
+                    new CubeField(0, 0, 0),
+                    new CubeField(1, 1, 0),
+                    new CubeField(2, 2, 0),
+                    new CubeField(3, 3, 0)
+            ), false).setNextObjective(LESSON_4);
+
+    private final Objective LESSON_2 = new ObjectiveRow(
+            new CubeRow(
+                    new CubeField(0, 0, 0),
+                    new CubeField(0, 1, 0),
+                    new CubeField(0, 2, 0),
+                    new CubeField(0, 3, 0)
+            ), true).setNextObjective(LESSON_3);
+
+    private final Objective LESSON_1 = new ObjectiveRow(
+            new CubeRow(
+                    new CubeField(0, 0, 0),
+                    new CubeField(1, 0, 0),
+                    new CubeField(2, 0, 0),
+                    new CubeField(3, 0, 0)
+            ), true).setNextObjective(LESSON_2);
+
     private final FieldValue player = FieldValue.CROSS;
-    private Runnable runAfter;
+    private Objective currentObjective = LESSON_1;
+    private final Random random = new Random(System.currentTimeMillis());
     private CubeRow highlightingRow = null, hintRow = null;
 
     private final int fieldHintColor;
@@ -44,14 +95,12 @@ public class GameModeTutorial extends GameMode {
 
     @Override
     public boolean onTap(int x, int y, int z) {
-        cube.setValueAt(x, y, z, player, false);
-        runAfter.run();
-        return true;
+        return currentObjective.onTap(x, y, z);
     }
 
     @Override
     public void onInit() {
-        lesson1();
+        currentObjective.onInit();
     }
 
     @Override
@@ -72,159 +121,65 @@ public class GameModeTutorial extends GameMode {
         }
     }
 
-    private void lesson1(){
-        cube.clear();
-        cube.setValueAt(0, 0, 0, player, false);
-        cube.setValueAt(1, 0, 0, player, false);
-        cube.setValueAt(3, 0, 0, player, false);
-        highlightingRow = null;
-        hintRow = new CubeRow(
-                new CubeField(0, 0, 0),
-                new CubeField(1, 0, 0),
-                new CubeField(2, 0, 0),
-                new CubeField(3, 0, 0)
-        );
-        updateBoard();
-        AlertHelper.buildMessageAlert(getContext(), R.string.tutorial_objective, R.string.tutorial_build_row).show();
-        runAfter = new Runnable() {
-            @Override
-            public void run() {
-                highlightingRow = cube.searchWinningRow();
-                if(highlightingRow != null){
-                    AlertHelper.buildMessageAlert(getContext(), R.string.tutorial_objective_success, R.string.tutorial_build_row_success, new Runnable() {
-                        @Override
-                        public void run() {
-                            lesson2();
-                        }
-                    }).show();
-                }
-            }
-        };
+    private interface Objective{
+
+        void onInit();
+        boolean onTap(int x, int y, int z);
+        Objective setNextObjective(@Nullable Objective objective);
+
     }
 
-    private void lesson2(){
-        cube.clear();
-        cube.setValueAt(0, 0, 0, player, false);
-        cube.setValueAt(0, 2, 0, player, false);
-        cube.setValueAt(0, 3, 0, player, false);
-        highlightingRow = null;
-        hintRow = new CubeRow(
-                new CubeField(0, 0, 0),
-                new CubeField(0, 1, 0),
-                new CubeField(0, 2, 0),
-                new CubeField(0, 3, 0)
-        );
-        updateBoard();
-        AlertHelper.buildMessageAlert(getContext(), R.string.tutorial_objective, R.string.tutorial_build_row).show();
-        runAfter = new Runnable() {
-            @Override
-            public void run() {
-                highlightingRow = cube.searchWinningRow();
-                if(highlightingRow != null){
-                    AlertHelper.buildMessageAlert(getContext(), R.string.tutorial_objective_success, R.string.tutorial_build_row_success, new Runnable() {
-                        @Override
-                        public void run() {
-                            lesson3();
-                        }
-                    }).show();
+    private class ObjectiveRow implements Objective{
+        private final CubeRow row;
+        private final boolean hint;
+        private Objective nextObjective = null;
+
+        private ObjectiveRow(CubeRow row, boolean hint){
+            this.row = row;
+            this.hint = hint;
+        }
+
+        @Override
+        public void onInit() {
+            currentObjective = this;
+            cube.clear();
+            int hide = random.nextInt(cube.dimension());
+            for(int i = 0 ; i < cube.dimension() ; i++){
+                if(i != hide){
+                    CubeField field = this.row.getField(i);
+                    cube.setValueAt(field.getX(), field.getY(), field.getZ(), player, false);
                 }
             }
-        };
-    }
+            highlightingRow = null;
+            hintRow = hint ? this.row : null;
+            updateBoard();
+            AlertHelper.buildMessageAlert(getContext(), R.string.tutorial_objective, R.string.tutorial_build_row).show();
+        }
 
-    private void lesson3(){
-        cube.clear();
-        cube.setValueAt(0, 0, 0, player, false);
-        cube.setValueAt(1, 1, 0, player, false);
-        cube.setValueAt(2, 2, 0, player, false);
-        highlightingRow = null;
-        hintRow = null;
-        updateBoard();
-        AlertHelper.buildMessageAlert(getContext(), R.string.tutorial_objective, R.string.tutorial_build_row).show();
-        runAfter = new Runnable() {
-            @Override
-            public void run() {
-                highlightingRow = cube.searchWinningRow();
-                if(highlightingRow != null){
-                    AlertHelper.buildMessageAlert(getContext(), R.string.tutorial_objective_success, R.string.tutorial_build_row_success, new Runnable() {
-                        @Override
-                        public void run() {
-                            lesson4();
-                        }
-                    }).show();
-                }
-            }
-        };
-    }
-
-    private void lesson4(){
-        cube.clear();
-        cube.setValueAt(0, 0, 1, player, false);
-        cube.setValueAt(0, 0, 2, player, false);
-        cube.setValueAt(0, 0, 3, player, false);
-        highlightingRow = null;
-        hintRow = null;
-        updateBoard();
-        AlertHelper.buildMessageAlert(getContext(), R.string.tutorial_objective, R.string.tutorial_build_row).show();
-        runAfter = new Runnable() {
-            @Override
-            public void run() {
-                highlightingRow = cube.searchWinningRow();
-                if(highlightingRow != null){
-                    AlertHelper.buildMessageAlert(getContext(), R.string.tutorial_objective_success, R.string.tutorial_build_row_success, new Runnable() {
-                        @Override
-                        public void run() {
-                            lesson5();
-                        }
-                    }).show();
-                }
-            }
-        };
-    }
-
-    private void lesson5(){
-        cube.clear();
-        cube.setValueAt(0, 0, 0, player, false);
-        cube.setValueAt(1, 1, 1, player, false);
-        cube.setValueAt(3, 3, 3, player, false);
-        highlightingRow = null;
-        hintRow = null;
-        updateBoard();
-        AlertHelper.buildMessageAlert(getContext(), R.string.tutorial_objective, R.string.tutorial_build_row).show();
-        runAfter = new Runnable() {
-            @Override
-            public void run() {
-                highlightingRow = cube.searchWinningRow();
-                if(highlightingRow != null){
-                    AlertHelper.buildMessageAlert(getContext(), R.string.tutorial_objective_success, R.string.tutorial_build_row_success, new Runnable() {
-                        @Override
-                        public void run() {
-                            lesson6();
-                        }
-                    }).show();
-                }
-            }
-        };
-    }
-
-    private void lesson6(){
-        cube.clear();
-        cube.setValueAt(3, 0, 0, player, false);
-        cube.setValueAt(1, 0, 2, player, false);
-        cube.setValueAt(0, 0, 3, player, false);
-        highlightingRow = null;
-        hintRow = null;
-        updateBoard();
-        AlertHelper.buildMessageAlert(getContext(), R.string.tutorial_objective, R.string.tutorial_build_row).show();
-        runAfter = new Runnable() {
-            @Override
-            public void run() {
-                highlightingRow = cube.searchWinningRow();
-                if(highlightingRow != null){
+        @Override
+        public boolean onTap(int x, int y, int z) {
+            cube.setValueAt(x, y, z, player, false);
+            highlightingRow = cube.searchWinningRow();
+            if(highlightingRow != null){
+                if(nextObjective == null){
                     announceWinner(false);
                     AlertHelper.buildMessageAlert(getContext(), R.string.tutorial_objective_success, R.string.tutorial_complete).show();
+                }else{
+                    AlertHelper.buildMessageAlert(getContext(), R.string.tutorial_objective_success, R.string.tutorial_build_row_success, new Runnable() {
+                        @Override
+                        public void run() {
+                            nextObjective.onInit();
+                        }
+                    }).show();
                 }
             }
-        };
+            return true;
+        }
+
+        @Override
+        public Objective setNextObjective(Objective objective) {
+            this.nextObjective = objective;
+            return this;
+        }
     }
 }
