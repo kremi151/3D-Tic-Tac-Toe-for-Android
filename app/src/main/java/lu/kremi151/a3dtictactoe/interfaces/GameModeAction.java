@@ -18,18 +18,29 @@
 
 package lu.kremi151.a3dtictactoe.interfaces;
 
-import android.content.Context;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 
-public interface ActivityInterface {
+public class GameModeAction implements MenuItem.OnMenuItemClickListener{
 
-    void setSubtitle(int subtitle, Object... args);
-    void setSubtitle(CharSequence subtitle);
-    GameModeAction addAction(int titleRes, Runnable action, boolean enabled);
-    GameModeAction addAction(int titleRes, Runnable action);
-    void updateActions();
-    Context getContext();
-    void updateBoard();
-    void enqueueTask(Runnable runnable);
-    Savegame getSavegame();
+    public final String title;
+    public final Runnable action;
+    public boolean enabled = true;
 
+    public GameModeAction(String title, Runnable action){
+        this.title = title;
+        this.action = action;
+    }
+
+    public GameModeAction setEnabled(boolean enabled){
+        this.enabled = enabled;
+        return this;
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        action.run();
+        return true;
+    }
 }

@@ -117,6 +117,10 @@ public abstract class GameMode implements OnBoardTapListener{
         this.activity.updateBoard();
     }
 
+    protected final ActivityInterface getInterface(){
+        return activity;
+    }
+
     protected final void enqueueTask(Runnable runnable){
         this.activity.enqueueTask(runnable);
     }

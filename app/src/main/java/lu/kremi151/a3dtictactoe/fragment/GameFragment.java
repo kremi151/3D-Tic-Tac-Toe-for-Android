@@ -23,15 +23,21 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import lu.kremi151.a3dtictactoe.R;
 import lu.kremi151.a3dtictactoe.TTTApp;
 import lu.kremi151.a3dtictactoe.interfaces.Acceptor;
 import lu.kremi151.a3dtictactoe.interfaces.ActivityInterface;
 import lu.kremi151.a3dtictactoe.interfaces.FieldColorInterceptor;
+import lu.kremi151.a3dtictactoe.interfaces.GameModeAction;
 import lu.kremi151.a3dtictactoe.interfaces.OnBoardTapListener;
 import lu.kremi151.a3dtictactoe.interfaces.Savegame;
 import lu.kremi151.a3dtictactoe.mode.GameMode;
@@ -47,6 +53,9 @@ public class GameFragment extends BaseFragment{
     private GameBoard gameBoard;
     private GameCube cube = new GameCube();
     private GameMode gameMode;
+
+    private List<GameModeAction> actions = new ArrayList<>();
+    private boolean isInitialized = false;
 
     public GameFragment(){}
 
@@ -79,6 +88,7 @@ public class GameFragment extends BaseFragment{
         }else{
             gameMode = new GameModeLocalMultiplayer(activityInterface, cube);
         }
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -96,7 +106,10 @@ public class GameFragment extends BaseFragment{
         gameBoard.setFieldColorInterceptor(fieldColorInterceptor);
         gameBoard.setValueColorInterceptor(fieldValueColorInterceptor);
         gameBoard.resume();
-        gameMode.onInit();
+        if(!isInitialized){
+            gameMode.onInit();
+            isInitialized = true;
+        }
     }
 
     @Override
@@ -115,6 +128,16 @@ public class GameFragment extends BaseFragment{
     public void onDestroy(){
         super.onDestroy();
         ((AppCompatActivity)getActivity()).getSupportActionBar().setSubtitle(null);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        for(int i = 0 ; i < actions.size() ; i++){
+            MenuItem menuItem = menu.add(actions.get(i).title)
+                    .setOnMenuItemClickListener(actions.get(i))
+                    .setEnabled(actions.get(i).enabled);
+            menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        }
     }
 
     @Override
@@ -171,6 +194,24 @@ public class GameFragment extends BaseFragment{
         @Override
         public void setSubtitle(CharSequence subtitle) {
             ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(subtitle);
+        }
+
+        @Override
+        public GameModeAction addAction(int titleRes, Runnable action, boolean enabled) {
+            GameModeAction gmaction = new GameModeAction(getString(titleRes), action).setEnabled(enabled);
+            actions.add(gmaction);
+            updateActions();
+            return gmaction;
+        }
+
+        @Override
+        public GameModeAction addAction(int titleRes, Runnable action) {
+            return addAction(titleRes, action, true);
+        }
+
+        @Override
+        public void updateActions() {
+            getActivity().invalidateOptionsMenu();
         }
 
         @Override

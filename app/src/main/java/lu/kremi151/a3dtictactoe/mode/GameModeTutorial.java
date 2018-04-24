@@ -25,6 +25,7 @@ import java.util.Random;
 import lu.kremi151.a3dtictactoe.R;
 import lu.kremi151.a3dtictactoe.enums.FieldValue;
 import lu.kremi151.a3dtictactoe.interfaces.ActivityInterface;
+import lu.kremi151.a3dtictactoe.interfaces.GameModeAction;
 import lu.kremi151.a3dtictactoe.util.AlertHelper;
 import lu.kremi151.a3dtictactoe.util.CubeField;
 import lu.kremi151.a3dtictactoe.util.CubeRow;
@@ -84,6 +85,7 @@ public class GameModeTutorial extends GameMode {
     private Objective currentObjective = LESSON_1;
     private final Random random = new Random(System.currentTimeMillis());
     private CubeRow highlightingRow = null, hintRow = null;
+    private GameModeAction actionNext;
 
     private final int fieldHintColor;
 
@@ -100,6 +102,18 @@ public class GameModeTutorial extends GameMode {
 
     @Override
     public void onInit() {
+        actionNext = getInterface().addAction(R.string.next, new Runnable() {
+            @Override
+            public void run() {
+                if(currentObjective != null && currentObjective.getNextObjective() != null){
+                    currentObjective = currentObjective.getNextObjective();
+                    currentObjective.onInit();
+                    lockGame(false);
+                    actionNext.enabled = false;
+                    getInterface().updateActions();
+                }
+            }
+        }, false);
         currentObjective.onInit();
     }
 
@@ -121,18 +135,28 @@ public class GameModeTutorial extends GameMode {
         }
     }
 
-    private interface Objective{
+    private abstract class Objective{
 
-        void onInit();
-        boolean onTap(int x, int y, int z);
-        Objective setNextObjective(@Nullable Objective objective);
+        private Objective nextObjective;
+
+        public abstract void onInit();
+        public abstract boolean onTap(int x, int y, int z);
+
+        final Objective setNextObjective(@Nullable Objective objective){
+            this.nextObjective = objective;
+            return this;
+        }
+
+        @Nullable
+        final Objective getNextObjective(){
+            return nextObjective;
+        }
 
     }
 
-    private class ObjectiveRow implements Objective{
+    private class ObjectiveRow extends Objective{
         private final CubeRow row;
         private final boolean hint;
-        private Objective nextObjective = null;
 
         private ObjectiveRow(CubeRow row, boolean hint){
             this.row = row;
@@ -141,7 +165,7 @@ public class GameModeTutorial extends GameMode {
 
         @Override
         public void onInit() {
-            currentObjective = this;
+            //currentObjective = this;
             cube.clear();
             int hide = random.nextInt(cube.dimension());
             for(int i = 0 ; i < cube.dimension() ; i++){
@@ -161,25 +185,36 @@ public class GameModeTutorial extends GameMode {
             cube.setValueAt(x, y, z, player, false);
             highlightingRow = cube.searchWinningRow();
             if(highlightingRow != null){
-                if(nextObjective == null){
+                if(getNextObjective() == null){
                     announceWinner(false);
                     AlertHelper.buildMessageAlert(getContext(), R.string.tutorial_objective_success, R.string.tutorial_complete).show();
                 }else{
-                    AlertHelper.buildMessageAlert(getContext(), R.string.tutorial_objective_success, R.string.tutorial_build_row_success, new Runnable() {
-                        @Override
-                        public void run() {
-                            nextObjective.onInit();
-                        }
-                    }).show();
+                    AlertHelper.buildMessageAlert(getContext(), R.string.tutorial_objective_success, R.string.tutorial_build_row_success).show();
+                    lockGame(true);
+                    actionNext.enabled = true;
+                    getInterface().updateActions();
                 }
             }
             return true;
         }
+    }
+
+    private class ObjectiveOutplay extends Objective{//TODO: Complete
 
         @Override
-        public Objective setNextObjective(Objective objective) {
-            this.nextObjective = objective;
-            return this;
+        public void onInit() {
+            cube.setValueAt(1, 0, 0, player, false);
+            cube.setValueAt(1, 1, 0, player, false);
+            cube.setValueAt(2, 3, 0, player, false);
+            cube.setValueAt(3, 3, 0, player, false);
+        }
+
+        @Override
+        public boolean onTap(int x, int y, int z) {
+            if(x == 1 && y == 3 && z == 0){
+
+            }
+            return true;
         }
     }
 }
