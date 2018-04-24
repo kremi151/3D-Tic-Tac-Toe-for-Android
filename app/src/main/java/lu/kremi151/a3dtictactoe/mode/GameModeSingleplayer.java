@@ -31,40 +31,27 @@ import lu.kremi151.a3dtictactoe.interfaces.ActivityInterface;
 import lu.kremi151.a3dtictactoe.util.CubeField;
 import lu.kremi151.a3dtictactoe.util.CubeRow;
 import lu.kremi151.a3dtictactoe.util.GameCube;
+import lu.kremi151.a3dtictactoe.util.SingleplayerState;
 
 public class GameModeSingleplayer extends GameMode {
 
     private final FieldValue player = FieldValue.CIRCLE;
-    private final List<CubeRow> possibilities;
-    private final List<CubeField> fields;
-    private final Random random = new Random(System.currentTimeMillis());
-    private float attack = 0.5f;
-    private float defense = 0.5f;
-    private final float mind[][][] = new float[cube.width()][cube.height()][cube.depth()];
-    private float mindMax = 1.0f;
     private String tag = null;
     private Acceptor<GameModeSingleplayer> onWinListener = null;
+    private OptimizedSingleplayer singleplayerState;
 
     public GameModeSingleplayer(ActivityInterface activity, GameCube cube) {
         super(activity, cube);
-        possibilities = new ArrayList<>(cube.getRows());
-        fields = new ArrayList<>(cube.width() * cube.height() * cube.depth());
-        for(int x = 0 ; x < cube.width() ; x++){
-            for(int y = 0 ; y < cube.height() ; y++){
-                for(int z = 0 ; z < cube.depth() ; z++){
-                    fields.add(new CubeField(x, y, z));
-                }
-            }
-        }
+        this.singleplayerState = new OptimizedSingleplayer(player.opposite(), cube);
     }
 
     public GameModeSingleplayer setAttack(float attack){
-        this.attack = Math.min(1f, attack);
+        this.singleplayerState.setAttack(attack);
         return this;
     }
 
     public GameModeSingleplayer setDefense(float defense){
-        this.defense = Math.min(1f, defense);
+        this.singleplayerState.setDefense(defense);
         return this;
     }
 
@@ -88,46 +75,6 @@ public class GameModeSingleplayer extends GameMode {
         announceNextPlayer(player);
     }
 
-    private void resetMind(){
-        mindMax = 1.0f;
-        for(int x = 0 ; x < cube.width() ; x++){
-            for(int y = 0 ; y < cube.height() ; y++){
-                for(int z = 0 ; z < cube.depth() ; z++){
-                    mind[x][y][z] = 0.0f;
-                }
-            }
-        }
-    }
-
-    @Nullable
-    private CubeField findEmptyField(){
-        int targetX = random.nextInt(cube.width());
-        int targetY = random.nextInt(cube.height());
-        int targetZ = random.nextInt(cube.depth());
-        if(cube.valueAt(targetX, targetY, targetZ) != FieldValue.EMPTY){
-            for(int mx = 0 ; mx < cube.width() ; mx++){
-                for(int my = 0 ; my < cube.height() ; my++){
-                    for(int mz = 0 ; mz < cube.depth() ; mz++){
-                        if(cube.valueAt(mx, my, mz) == FieldValue.EMPTY){
-                            return new CubeField(mx, my, mz);
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-        return new CubeField(targetX, targetY, targetZ);
-    }
-
-    private float rowProbability(CubeRow row){
-        /*return Math.max(
-                attack * cube.chanceToWinOnRow(player.opposite(), row),
-                defense * cube.chanceToWinOnRow(player, row)
-        );*/
-        return attack * cube.chanceToWinOnRow(player.opposite(), row) +
-                defense * cube.chanceToWinOnRow(player, row);
-    }
-
     @Override
     public boolean onTap(int x, int y, int z) {
         if(cube.valueAt(x, y, z) == FieldValue.EMPTY){
@@ -146,8 +93,6 @@ public class GameModeSingleplayer extends GameMode {
 
     @Override
     public int getFieldColor(int x, int y, int z, int previousColor){
-        /*int factor = (int)Math.ceil((255f * mind[x][y][z]) / mindMax);
-        return Color.rgb(255, 255 - factor, 255 - factor);*/
         return super.getFieldColor(x, y, z, previousColor);
     }
 
@@ -155,62 +100,39 @@ public class GameModeSingleplayer extends GameMode {
 
         @Override
         public void run(){
-            resetMind();
-            Iterator<CubeRow> it = possibilities.iterator();
-            while(it.hasNext()){
-                CubeRow row = it.next();
+            singleplayerState.doTurn();
+        }
+    }
 
-                final float probability = Math.min(1f, rowProbability(row));
-                if(probability == 0.0f){
-                    it.remove();
-                }else{
-                    for(int fieldIndex = 0 ; fieldIndex < row.fieldCount() ; fieldIndex++){
-                        CubeField field = row.getField(fieldIndex);
-                        float value = mind[field.getX()][field.getY()][field.getZ()];
-                        value = Math.max(value, probability);
-                        mind[field.getX()][field.getY()][field.getZ()] = value;
-                        if(value > mindMax){
-                            mindMax = value;
-                        }
-                    }
-                }
-            }
+    private class OptimizedSingleplayer extends SingleplayerState{
 
-            CubeField targetField = findEmptyField();
-            if(targetField != null){
-                int targetX = targetField.getX();
-                int targetY = targetField.getY();
-                int targetZ = targetField.getZ();
-                float highestChance = mind[targetX][targetY][targetZ];
-                for(int mx = 0 ; mx < cube.width() ; mx++){
-                    for(int my = 0 ; my < cube.height() ; my++){
-                        for(int mz = 0 ; mz < cube.depth() ; mz++){
-                            if(mind[mx][my][mz] > highestChance && cube.valueAt(mx, my, mz) == FieldValue.EMPTY){
-                                targetX = mx;
-                                targetY = my;
-                                targetZ = mz;
-                                highestChance = mind[mx][my][mz];
-                            }
-                        }
-                    }
+        public OptimizedSingleplayer(FieldValue sign, GameCube cube) {
+            super(sign, cube);
+        }
+
+        @Override
+        protected void giveUp(){
+            enqueueTask(new Runnable() {
+                @Override
+                public void run() {
+                    GameModeSingleplayer.this.giveUp(player.opposite());
                 }
-                final int _targetX = targetX;
-                final int _targetY = targetY;
-                final int _targetZ = targetZ;
-                enqueueTask(new Runnable() {
-                    @Override
-                    public void run() {
-                        cube.setValueAt(_targetX, _targetY, _targetZ, player.opposite());
-                        if(!announceWinner()){
-                            announceNextPlayer(player);
-                            lockGame(false);
-                        }
-                        updateBoard();
+            });
+        }
+
+        @Override
+        protected void onTurnFinished(final int x, final int y, final int z){
+            enqueueTask(new Runnable() {
+                @Override
+                public void run() {
+                    cube.setValueAt(x, y, z, player.opposite());
+                    if(!announceWinner()){
+                        announceNextPlayer(player);
+                        lockGame(false);
                     }
-                });
-            }else{
-                giveUp(player.opposite());
-            }
+                    updateBoard();
+                }
+            });
         }
     }
 }
