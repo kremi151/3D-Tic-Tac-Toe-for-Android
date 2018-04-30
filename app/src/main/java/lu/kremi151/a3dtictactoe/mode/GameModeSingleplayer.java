@@ -20,16 +20,9 @@ package lu.kremi151.a3dtictactoe.mode;
 
 import android.support.annotation.Nullable;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-
 import lu.kremi151.a3dtictactoe.enums.FieldValue;
 import lu.kremi151.a3dtictactoe.interfaces.Acceptor;
 import lu.kremi151.a3dtictactoe.interfaces.ActivityInterface;
-import lu.kremi151.a3dtictactoe.util.CubeField;
-import lu.kremi151.a3dtictactoe.util.CubeRow;
 import lu.kremi151.a3dtictactoe.util.GameCube;
 import lu.kremi151.a3dtictactoe.util.SingleplayerState;
 

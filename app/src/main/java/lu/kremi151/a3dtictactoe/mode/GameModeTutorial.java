@@ -25,13 +25,16 @@ import java.util.Random;
 import lu.kremi151.a3dtictactoe.R;
 import lu.kremi151.a3dtictactoe.enums.FieldValue;
 import lu.kremi151.a3dtictactoe.interfaces.ActivityInterface;
-import lu.kremi151.a3dtictactoe.interfaces.GameModeAction;
+import lu.kremi151.a3dtictactoe.interfaces.ActivityAction;
 import lu.kremi151.a3dtictactoe.util.AlertHelper;
 import lu.kremi151.a3dtictactoe.util.CubeField;
 import lu.kremi151.a3dtictactoe.util.CubeRow;
 import lu.kremi151.a3dtictactoe.util.GameCube;
+import lu.kremi151.a3dtictactoe.util.SingleplayerState;
 
 public class GameModeTutorial extends GameMode {
+
+    private final Objective LESSON_7 = new ObjectiveOutplay();
 
     private final Objective LESSON_6 = new ObjectiveRow(
             new CubeRow(
@@ -39,7 +42,7 @@ public class GameModeTutorial extends GameMode {
                     new CubeField(2, 0, 1),
                     new CubeField(1, 0, 2),
                     new CubeField(0, 0, 3)
-            ), false);
+            ), false).setNextObjective(LESSON_7);
 
     private final Objective LESSON_5 = new ObjectiveRow(
             new CubeRow(
@@ -85,7 +88,7 @@ public class GameModeTutorial extends GameMode {
     private Objective currentObjective = LESSON_1;
     private final Random random = new Random(System.currentTimeMillis());
     private CubeRow highlightingRow = null, hintRow = null;
-    private GameModeAction actionNext;
+    private ActivityAction actionNext, actionRetry;
 
     private final int fieldHintColor;
 
@@ -102,7 +105,15 @@ public class GameModeTutorial extends GameMode {
 
     @Override
     public void onInit() {
-        actionNext = getInterface().addAction(R.string.next, new Runnable() {
+        actionRetry = getInterface().buildAction(R.string.retry, new Runnable() {
+            @Override
+            public void run() {
+                if(currentObjective != null){
+                    currentObjective.onInit();
+                }
+            }
+        }).create();
+        actionNext = getInterface().buildAction(R.string.next, new Runnable() {
             @Override
             public void run() {
                 if(currentObjective != null && currentObjective.getNextObjective() != null){
@@ -113,7 +124,7 @@ public class GameModeTutorial extends GameMode {
                     getInterface().updateActions();
                 }
             }
-        }, false);
+        }).setEnabled(false).setVisible(true).create();
         currentObjective.onInit();
     }
 
@@ -165,7 +176,6 @@ public class GameModeTutorial extends GameMode {
 
         @Override
         public void onInit() {
-            //currentObjective = this;
             cube.clear();
             int hide = random.nextInt(cube.dimension());
             for(int i = 0 ; i < cube.dimension() ; i++){
@@ -177,6 +187,7 @@ public class GameModeTutorial extends GameMode {
             highlightingRow = null;
             hintRow = hint ? this.row : null;
             updateBoard();
+            lockGame(false);
             AlertHelper.buildMessageAlert(getContext(), R.string.tutorial_objective, R.string.tutorial_build_row).show();
         }
 
@@ -199,22 +210,52 @@ public class GameModeTutorial extends GameMode {
         }
     }
 
-    private class ObjectiveOutplay extends Objective{//TODO: Complete
+    private class ObjectiveOutplay extends Objective{
+
+        private SingleplayerState singleplayerState;
 
         @Override
         public void onInit() {
+            cube.clear();
             cube.setValueAt(1, 0, 0, player, false);
             cube.setValueAt(1, 1, 0, player, false);
             cube.setValueAt(2, 3, 0, player, false);
             cube.setValueAt(3, 3, 0, player, false);
+            highlightingRow = null;
+            hintRow = null;
+            updateBoard();
+            lockGame(false);
+            this.singleplayerState = new SingleplayerState(player.opposite(), cube);
+            AlertHelper.buildMessageAlert(getContext(), R.string.tutorial_objective, R.string.tutorial_build_row).show();
         }
 
         @Override
         public boolean onTap(int x, int y, int z) {
-            if(x == 1 && y == 3 && z == 0){
-
+            if(cube.valueAt(x, y, z) == FieldValue.EMPTY){
+                cube.setValueAt(x, y, z, player);
+                highlightingRow = cube.searchWinningRow();
+                if(highlightingRow == null){
+                    singleplayerState.doTurn();
+                    highlightingRow = cube.searchWinningRow();
+                    if(highlightingRow != null){
+                        lockGame(true);
+                        AlertHelper.buildMessageAlert(getContext(), R.string.tutorial_objective, R.string.tutorial_build_row_fail).show();
+                    }
+                }else{
+                    if(getNextObjective() == null){
+                        announceWinner(false);
+                        AlertHelper.buildMessageAlert(getContext(), R.string.tutorial_objective_success, R.string.tutorial_complete).show();
+                    }else{
+                        AlertHelper.buildMessageAlert(getContext(), R.string.tutorial_objective_success, R.string.tutorial_build_row_success).show();
+                        lockGame(true);
+                        actionNext.enabled = true;
+                        getInterface().updateActions();
+                    }
+                }
+                return true;
+            }else{
+                return false;
             }
-            return true;
         }
     }
 }

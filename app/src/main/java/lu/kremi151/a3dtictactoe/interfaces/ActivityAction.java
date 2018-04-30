@@ -18,23 +18,27 @@
 
 package lu.kremi151.a3dtictactoe.interfaces;
 
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
-public class GameModeAction implements MenuItem.OnMenuItemClickListener{
+public class ActivityAction implements MenuItem.OnMenuItemClickListener{
 
     public final String title;
     public final Runnable action;
     public boolean enabled = true;
+    public boolean visible = true;
 
-    public GameModeAction(String title, Runnable action){
+    public ActivityAction(String title, Runnable action){
         this.title = title;
         this.action = action;
     }
 
-    public GameModeAction setEnabled(boolean enabled){
+    public ActivityAction setEnabled(boolean enabled){
         this.enabled = enabled;
+        return this;
+    }
+
+    public ActivityAction setVisible(boolean visible){
+        this.visible = visible;
         return this;
     }
 
@@ -43,4 +47,5 @@ public class GameModeAction implements MenuItem.OnMenuItemClickListener{
         action.run();
         return true;
     }
+
 }

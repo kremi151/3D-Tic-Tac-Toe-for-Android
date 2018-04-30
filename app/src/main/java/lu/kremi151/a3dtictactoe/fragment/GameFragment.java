@@ -19,7 +19,6 @@
 package lu.kremi151.a3dtictactoe.fragment;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -37,7 +36,7 @@ import lu.kremi151.a3dtictactoe.TTTApp;
 import lu.kremi151.a3dtictactoe.interfaces.Acceptor;
 import lu.kremi151.a3dtictactoe.interfaces.ActivityInterface;
 import lu.kremi151.a3dtictactoe.interfaces.FieldColorInterceptor;
-import lu.kremi151.a3dtictactoe.interfaces.GameModeAction;
+import lu.kremi151.a3dtictactoe.interfaces.ActivityAction;
 import lu.kremi151.a3dtictactoe.interfaces.OnBoardTapListener;
 import lu.kremi151.a3dtictactoe.interfaces.Savegame;
 import lu.kremi151.a3dtictactoe.mode.GameMode;
@@ -54,7 +53,7 @@ public class GameFragment extends BaseFragment{
     private GameCube cube = new GameCube();
     private GameMode gameMode;
 
-    private List<GameModeAction> actions = new ArrayList<>();
+    private List<ActivityAction> actions = new ArrayList<>();
     private boolean isInitialized = false;
 
     public GameFragment(){}
@@ -133,10 +132,13 @@ public class GameFragment extends BaseFragment{
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         for(int i = 0 ; i < actions.size() ; i++){
-            MenuItem menuItem = menu.add(actions.get(i).title)
-                    .setOnMenuItemClickListener(actions.get(i))
-                    .setEnabled(actions.get(i).enabled);
-            menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            final ActivityAction action = actions.get(i);
+            if(action.visible){
+                MenuItem menuItem = menu.add(action.title)
+                        .setOnMenuItemClickListener(action)
+                        .setEnabled(action.enabled);
+                menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            }
         }
     }
 
@@ -197,16 +199,15 @@ public class GameFragment extends BaseFragment{
         }
 
         @Override
-        public GameModeAction addAction(int titleRes, Runnable action, boolean enabled) {
-            GameModeAction gmaction = new GameModeAction(getString(titleRes), action).setEnabled(enabled);
-            actions.add(gmaction);
-            updateActions();
-            return gmaction;
-        }
-
-        @Override
-        public GameModeAction addAction(int titleRes, Runnable action) {
-            return addAction(titleRes, action, true);
+        public ActionBuilder buildAction(int titleRes, Runnable action) {
+            return new ActionBuilder(new ActivityAction(getString(titleRes), action)) {
+                @Override
+                public ActivityAction create() {
+                    actions.add(action);
+                    updateActions();
+                    return action;
+                }
+            };
         }
 
         @Override

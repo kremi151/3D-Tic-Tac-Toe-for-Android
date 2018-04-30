@@ -152,5 +152,7 @@ public class SingleplayerState {
 
     protected void giveUp(){}
 
-    protected void onTurnFinished(int x, int y, int z){}
+    protected void onTurnFinished(int x, int y, int z){
+        cube.setValueAt(x, y, z, sign);
+    }
 }

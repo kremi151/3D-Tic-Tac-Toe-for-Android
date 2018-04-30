@@ -24,12 +24,32 @@ public interface ActivityInterface {
 
     void setSubtitle(int subtitle, Object... args);
     void setSubtitle(CharSequence subtitle);
-    GameModeAction addAction(int titleRes, Runnable action, boolean enabled);
-    GameModeAction addAction(int titleRes, Runnable action);
+    ActionBuilder buildAction(int titleRes, Runnable action);
     void updateActions();
     Context getContext();
     void updateBoard();
     void enqueueTask(Runnable runnable);
     Savegame getSavegame();
+
+    abstract class ActionBuilder{
+
+        protected ActivityAction action;
+
+        public ActionBuilder(ActivityAction action){
+            this.action = action;
+        }
+
+        public ActionBuilder setEnabled(boolean enabled){
+            this.action.setEnabled(enabled);
+            return this;
+        }
+
+        public ActionBuilder setVisible(boolean visible){
+            this.action.setVisible(visible);
+            return this;
+        }
+
+        public abstract ActivityAction create();
+    }
 
 }

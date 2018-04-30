@@ -36,4 +36,5 @@
     <string name="tutorial_build_row_success">You won by building a row of 4 fields!</string>
     <string name="tutorial_complete">You have completed the tutorial!</string>
     <string name="next">Next</string>
+    <string name="retry">Retry</string>
 </resources>
