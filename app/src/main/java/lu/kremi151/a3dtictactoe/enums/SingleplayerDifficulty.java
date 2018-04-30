@@ -19,12 +19,12 @@
 package lu.kremi151.a3dtictactoe.enums;
 
 public enum SingleplayerDifficulty {
-    VERY_EASY("veasy", 0.8f),
-    EASY("easy", 0.7f),
-    CHALLENGING("challenging", 0.6f),
-    HARD("hard", 0.5f),
-    VERY_HARD("vhard", 0.4f),
-    FRUSTRATING("mommy", 0.3f);
+    VERY_EASY("veasy", 0.7f),
+    EASY("easy", 0.6f),
+    CHALLENGING("challenging", 0.5f),
+    HARD("hard", 0.4f),
+    VERY_HARD("vhard", 0.3f),
+    FRUSTRATING("mommy", 0.2f);
 
     public final String savIdentifier;
     public final float attack;
