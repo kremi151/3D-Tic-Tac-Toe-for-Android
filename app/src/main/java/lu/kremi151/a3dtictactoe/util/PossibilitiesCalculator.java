@@ -24,10 +24,11 @@ import java.util.List;
 public class PossibilitiesCalculator {
 
     public static List<CubeRow> calculatePossibilities(int size){
+        final int maxIndex = size - 1;
         ArrayList<CubeRow> list = new ArrayList<>(76);
         for(int z = 0 ; z < size ; z++){
             list.add(CubeRow.spread(0, 0, z, 1, 1, 0));
-            list.add(CubeRow.spread(0, 3, z, 1, -1, 0));
+            list.add(CubeRow.spread(0, maxIndex, z, 1, -1, 0));
             for(int x = 0 ; x < size ; x++){
                 list.add(CubeRow.spread(x, 0, z, 0, 1, 0));
             }
@@ -37,19 +38,19 @@ public class PossibilitiesCalculator {
         }
         for(int x = 0 ; x < size ; x++){
             list.add(CubeRow.spread(x, 0, 0, 0, 1, 1));
-            list.add(CubeRow.spread(x, 3, 0, 0, -1, 1));
+            list.add(CubeRow.spread(x, maxIndex, 0, 0, -1, 1));
             for(int y = 0 ; y < size ; y++){
                 list.add(CubeRow.spread(x, y, 0, 0, 0, 1));
             }
         }
         for(int y = 0 ; y < size ; y++){
             list.add(CubeRow.spread(0, y, 0, 1, 0, 1));
-            list.add(CubeRow.spread(3, y, 0, -1, 0, 1));
+            list.add(CubeRow.spread(maxIndex, y, 0, -1, 0, 1));
         }
         list.add(CubeRow.spread(0, 0, 0, 1, 1, 1));
-        list.add(CubeRow.spread(0, 0, 3, 1, 1, -1));
-        list.add(CubeRow.spread(3, 0, 0, -1, 1, 1));
-        list.add(CubeRow.spread(3, 0, 3, -1, 1, -1));
+        list.add(CubeRow.spread(0, 0, maxIndex, 1, 1, -1));
+        list.add(CubeRow.spread(maxIndex, 0, 0, -1, 1, 1));
+        list.add(CubeRow.spread(maxIndex, 0, maxIndex, -1, 1, -1));
         return list;
     }
 }

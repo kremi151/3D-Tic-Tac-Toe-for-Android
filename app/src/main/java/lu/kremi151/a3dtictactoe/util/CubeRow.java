@@ -29,22 +29,6 @@ public class CubeRow {
         this.d = d;
     }
 
-    public CubeField getA() {
-        return a;
-    }
-
-    public CubeField getB() {
-        return b;
-    }
-
-    public CubeField getC() {
-        return c;
-    }
-
-    public CubeField getD() {
-        return d;
-    }
-
     public final int fieldCount(){
         return 4;
     }
@@ -73,7 +57,17 @@ public class CubeRow {
         return false;
     }
 
-    public static final CubeRow spread(int startX, int startY, int startZ, int dx, int dy, int dz){
+    /**
+     * Builds a row
+     * @param startX The x coordinate of the first field
+     * @param startY The y coordinate of the first field
+     * @param startZ The z coordinate of the first field
+     * @param dx The offset the x coordinates of the successive fields will be located at. Shall only be -1, 0 or 1.
+     * @param dy The offset the y coordinates of the successive fields will be located at. Shall only be -1, 0 or 1.
+     * @param dz The offset the z coordinates of the successive fields will be located at. Shall only be -1, 0 or 1.
+     * @return Returns the built row
+     */
+    public static CubeRow spread(int startX, int startY, int startZ, int dx, int dy, int dz){
         return new CubeRow(
                 new CubeField(startX, startY, startZ),
                 new CubeField(startX + dx, startY + dy, startZ + dz),

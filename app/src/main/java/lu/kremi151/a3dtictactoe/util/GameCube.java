@@ -28,13 +28,20 @@ import lu.kremi151.a3dtictactoe.enums.FieldValue;
 
 public class GameCube {
 
-    private final FieldValue cube[][][] = new FieldValue[4][4][4];
+    private final int dimension;
+    private final FieldValue cube[][][];
     private final List<CubeRow> possibilities;
     private final LinkedList<Move> history = new LinkedList<>();
 
-    public GameCube(){
+    public GameCube(int dimension){
+        this.cube = new FieldValue[dimension][dimension][dimension];
+        this.dimension = dimension;
         clear();
-        this.possibilities = PossibilitiesCalculator.calculatePossibilities(4);
+        this.possibilities = PossibilitiesCalculator.calculatePossibilities(dimension);
+    }
+
+    public GameCube(){
+        this(4);
     }
 
     public void clear(){
@@ -79,7 +86,7 @@ public class GameCube {
     }
 
     public int dimension(){
-        return 4;
+        return this.dimension;
     }
 
     @Deprecated
@@ -112,13 +119,13 @@ public class GameCube {
     }
 
     public FieldValue evaluateRow(CubeRow row){
-        if(valueAt(row.getA()) == valueAt(row.getB())
-                && valueAt(row.getB()) == valueAt(row.getC())
-                && valueAt(row.getC()) == valueAt(row.getD())){
-            return valueAt(row.getA());
-        }else{
-            return FieldValue.EMPTY;
+        final FieldValue comp = valueAt(row.getField(0));
+        for(int i = 1 ; i < row.fieldCount() ; i++){
+            if(comp != valueAt(row.getField(i))){
+                return FieldValue.EMPTY;
+            }
         }
+        return comp;
     }
 
     public float chanceToWinOnField(FieldValue player, CubeField field){
@@ -135,35 +142,19 @@ public class GameCube {
 
     public float chanceToWinOnRow(FieldValue player, CubeRow row){
         float index = 0.0f;
-        if(valueAt(row.getA()) == player){
-            index += 0.25f;
-        }else if(valueAt(row.getA()) == FieldValue.EMPTY){
-            index += 0.1f;
-        }else{
-            return 0f;
+
+        for(int i = 0 ; i < row.fieldCount() ; i++){
+            final CubeField field = row.getField(i);
+            if(valueAt(field) == player){
+                index += 1.0f;
+            }else if(valueAt(field) == FieldValue.EMPTY){
+                index += 0.5;
+            }else{
+                return 0f;
+            }
         }
-        if(valueAt(row.getB()) == player){
-            index += 0.25f;
-        }else if(valueAt(row.getB()) == FieldValue.EMPTY){
-            index += 0.1f;
-        }else{
-            return 0f;
-        }
-        if(valueAt(row.getC()) == player){
-            index += 0.25f;
-        }else if(valueAt(row.getC()) == FieldValue.EMPTY){
-            index += 0.1f;
-        }else{
-            return 0f;
-        }
-        if(valueAt(row.getD()) == player){
-            index += 0.25f;
-        }else if(valueAt(row.getD()) == FieldValue.EMPTY){
-            index += 0.1f;
-        }else{
-            return 0f;
-        }
-        index = Math.min(index, 1.0f);
+
+        index = Math.min(1.0f, index / row.fieldCount());
         return index * index;
     }
 
