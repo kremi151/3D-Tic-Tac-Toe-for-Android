@@ -28,7 +28,7 @@ import lu.kremi151.a3dtictactoe.util.SingleplayerState;
 
 public class GameModeSingleplayer extends GameMode {
 
-    private final FieldValue player = FieldValue.CIRCLE;
+    private final FieldValue player = FieldValue.random(random);
     private String tag = null;
     private Acceptor<GameModeSingleplayer> onWinListener = null;
     private OptimizedSingleplayer singleplayerState;

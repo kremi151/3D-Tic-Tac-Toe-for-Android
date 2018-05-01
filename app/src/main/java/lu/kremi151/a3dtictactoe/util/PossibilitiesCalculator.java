@@ -26,95 +26,30 @@ public class PossibilitiesCalculator {
     public static List<CubeRow> calculatePossibilities(int size){
         ArrayList<CubeRow> list = new ArrayList<>(76);
         for(int z = 0 ; z < size ; z++){
-            list.add(new CubeRow(
-                    new CubeField(0, 0, z),
-                    new CubeField(1, 1, z),
-                    new CubeField(2, 2, z),
-                    new CubeField(3, 3, z)
-            ));
-            list.add(new CubeRow(
-                    new CubeField(0, 3, z),
-                    new CubeField(1, 2, z),
-                    new CubeField(2, 1, z),
-                    new CubeField(3, 0, z)
-            ));
+            list.add(CubeRow.spread(0, 0, z, 1, 1, 0));
+            list.add(CubeRow.spread(0, 3, z, 1, -1, 0));
             for(int x = 0 ; x < size ; x++){
-                list.add(new CubeRow(
-                        new CubeField(x, 0, z),
-                        new CubeField(x, 1, z),
-                        new CubeField(x, 2, z),
-                        new CubeField(x, 3, z)
-                ));
+                list.add(CubeRow.spread(x, 0, z, 0, 1, 0));
             }
             for(int y = 0 ; y < size ; y++){
-                list.add(new CubeRow(
-                        new CubeField(0, y, z),
-                        new CubeField(1, y, z),
-                        new CubeField(2, y, z),
-                        new CubeField(3, y, z)
-                ));
+                list.add(CubeRow.spread(0, y, z, 1, 0, 0));
             }
         }
         for(int x = 0 ; x < size ; x++){
-            list.add(new CubeRow(
-                    new CubeField(x, 0, 0),
-                    new CubeField(x, 1, 1),
-                    new CubeField(x, 2, 2),
-                    new CubeField(x, 3, 3)
-            ));
-            list.add(new CubeRow(
-                    new CubeField(x, 3, 0),
-                    new CubeField(x, 2, 1),
-                    new CubeField(x, 1, 2),
-                    new CubeField(x, 0, 3)
-            ));
+            list.add(CubeRow.spread(x, 0, 0, 0, 1, 1));
+            list.add(CubeRow.spread(x, 3, 0, 0, -1, 1));
             for(int y = 0 ; y < size ; y++){
-                list.add(new CubeRow(
-                        new CubeField(x, y, 0),
-                        new CubeField(x, y, 1),
-                        new CubeField(x, y, 2),
-                        new CubeField(x, y, 3)
-                ));
+                list.add(CubeRow.spread(x, y, 0, 0, 0, 1));
             }
         }
         for(int y = 0 ; y < size ; y++){
-            list.add(new CubeRow(
-                    new CubeField(0, y, 0),
-                    new CubeField(1, y, 1),
-                    new CubeField(2, y, 2),
-                    new CubeField(3, y, 3)
-            ));
-            list.add(new CubeRow(
-                    new CubeField(3, y, 0),
-                    new CubeField(2, y, 1),
-                    new CubeField(1, y, 2),
-                    new CubeField(0, y, 3)
-            ));
+            list.add(CubeRow.spread(0, y, 0, 1, 0, 1));
+            list.add(CubeRow.spread(3, y, 0, -1, 0, 1));
         }
-        list.add(new CubeRow(
-                new CubeField(0, 0, 0),
-                new CubeField(1, 1, 1),
-                new CubeField(2, 2, 2),
-                new CubeField(3, 3, 3)
-        ));
-        list.add(new CubeRow(
-                new CubeField(0, 0, 3),
-                new CubeField(1, 1, 2),
-                new CubeField(2, 2, 1),
-                new CubeField(3, 3, 0)
-        ));
-        list.add(new CubeRow(
-                new CubeField(3, 0, 0),
-                new CubeField(2, 1, 1),
-                new CubeField(1, 2, 2),
-                new CubeField(0, 3, 3)
-        ));
-        list.add(new CubeRow(
-                new CubeField(3, 0, 3),
-                new CubeField(2, 1, 2),
-                new CubeField(1, 2, 1),
-                new CubeField(0, 3, 0)
-        ));
+        list.add(CubeRow.spread(0, 0, 0, 1, 1, 1));
+        list.add(CubeRow.spread(0, 0, 3, 1, 1, -1));
+        list.add(CubeRow.spread(3, 0, 0, -1, 1, 1));
+        list.add(CubeRow.spread(3, 0, 3, -1, 1, -1));
         return list;
     }
 }

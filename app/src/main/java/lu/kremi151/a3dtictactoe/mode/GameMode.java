@@ -22,6 +22,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 
+import java.util.Random;
+
 import lu.kremi151.a3dtictactoe.R;
 import lu.kremi151.a3dtictactoe.enums.FieldValue;
 import lu.kremi151.a3dtictactoe.interfaces.ActivityInterface;
@@ -32,6 +34,7 @@ import lu.kremi151.a3dtictactoe.util.GameCube;
 
 public abstract class GameMode implements OnBoardTapListener{
 
+    protected final Random random = new Random(System.currentTimeMillis());
     protected final GameCube cube;
     private final ActivityInterface activity;
     private boolean locked = false;

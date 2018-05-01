@@ -20,8 +20,6 @@ package lu.kremi151.a3dtictactoe.mode;
 
 import android.support.annotation.Nullable;
 
-import java.util.Random;
-
 import lu.kremi151.a3dtictactoe.R;
 import lu.kremi151.a3dtictactoe.enums.FieldValue;
 import lu.kremi151.a3dtictactoe.interfaces.ActivityInterface;
@@ -42,7 +40,7 @@ public class GameModeTutorial extends GameMode {
                     new CubeField(2, 0, 1),
                     new CubeField(1, 0, 2),
                     new CubeField(0, 0, 3)
-            ), false).setNextObjective(LESSON_7);
+            ), 1, false).setNextObjective(LESSON_7);
 
     private final Objective LESSON_5 = new ObjectiveRow(
             new CubeRow(
@@ -50,7 +48,7 @@ public class GameModeTutorial extends GameMode {
                     new CubeField(1, 1, 1),
                     new CubeField(2, 2, 2),
                     new CubeField(3, 3, 3)
-            ), false).setNextObjective(LESSON_6);
+            ), 1, false).setNextObjective(LESSON_6);
 
     private final Objective LESSON_4 = new ObjectiveRow(
             new CubeRow(
@@ -58,7 +56,7 @@ public class GameModeTutorial extends GameMode {
                     new CubeField(0, 0, 1),
                     new CubeField(0, 0, 2),
                     new CubeField(0, 0, 3)
-            ), false).setNextObjective(LESSON_5);
+            ), 1, false).setNextObjective(LESSON_5);
 
     private final Objective LESSON_3 = new ObjectiveRow(
             new CubeRow(
@@ -66,7 +64,7 @@ public class GameModeTutorial extends GameMode {
                     new CubeField(1, 1, 0),
                     new CubeField(2, 2, 0),
                     new CubeField(3, 3, 0)
-            ), false).setNextObjective(LESSON_4);
+            ), 1, false).setNextObjective(LESSON_4);
 
     private final Objective LESSON_2 = new ObjectiveRow(
             new CubeRow(
@@ -74,7 +72,7 @@ public class GameModeTutorial extends GameMode {
                     new CubeField(0, 1, 0),
                     new CubeField(0, 2, 0),
                     new CubeField(0, 3, 0)
-            ), true).setNextObjective(LESSON_3);
+            ), 1, true).setNextObjective(LESSON_3);
 
     private final Objective LESSON_1 = new ObjectiveRow(
             new CubeRow(
@@ -82,11 +80,10 @@ public class GameModeTutorial extends GameMode {
                     new CubeField(1, 0, 0),
                     new CubeField(2, 0, 0),
                     new CubeField(3, 0, 0)
-            ), true).setNextObjective(LESSON_2);
+            ), 1, true).setNextObjective(LESSON_2);
 
-    private final FieldValue player = FieldValue.CROSS;
+    private final FieldValue player;
     private Objective currentObjective = LESSON_1;
-    private final Random random = new Random(System.currentTimeMillis());
     private CubeRow highlightingRow = null, hintRow = null;
     private ActivityAction actionNext, actionRetry;
 
@@ -94,7 +91,7 @@ public class GameModeTutorial extends GameMode {
 
     public GameModeTutorial(ActivityInterface activity, GameCube cube) {
         super(activity, cube);
-
+        this.player = FieldValue.random(random);
         this.fieldHintColor = getColor(R.color.fieldBackgroundHint);
     }
 
@@ -167,10 +164,13 @@ public class GameModeTutorial extends GameMode {
 
     private class ObjectiveRow extends Objective{
         private final CubeRow row;
+        private final int maxTries;
+        private int tries;
         private final boolean hint;
 
-        private ObjectiveRow(CubeRow row, boolean hint){
+        private ObjectiveRow(CubeRow row, int tries, boolean hint){
             this.row = row;
+            this.maxTries = tries;
             this.hint = hint;
         }
 
@@ -186,7 +186,9 @@ public class GameModeTutorial extends GameMode {
             }
             highlightingRow = null;
             hintRow = hint ? this.row : null;
+            this.tries = maxTries;
             updateBoard();
+            getInterface().setSubtitle(R.string.tries_left, tries);
             lockGame(false);
             AlertHelper.buildMessageAlert(getContext(), R.string.tutorial_objective, R.string.tutorial_build_row).show();
         }
@@ -195,6 +197,8 @@ public class GameModeTutorial extends GameMode {
         public boolean onTap(int x, int y, int z) {
             cube.setValueAt(x, y, z, player, false);
             highlightingRow = cube.searchWinningRow();
+            tries--;
+            getInterface().setSubtitle(R.string.tries_left, tries);
             if(highlightingRow != null){
                 if(getNextObjective() == null){
                     announceWinner(false);
@@ -205,6 +209,9 @@ public class GameModeTutorial extends GameMode {
                     actionNext.enabled = true;
                     getInterface().updateActions();
                 }
+            }else if(tries <= 0){
+                lockGame(true);
+                AlertHelper.buildMessageAlert(getContext(), R.string.tutorial_objective, R.string.tutorial_objective_fail_tries).show();
             }
             return true;
         }

@@ -18,6 +18,8 @@
 
 package lu.kremi151.a3dtictactoe.enums;
 
+import java.util.Random;
+
 import lu.kremi151.a3dtictactoe.R;
 
 public enum FieldValue {
@@ -42,5 +44,9 @@ public enum FieldValue {
             case CIRCLE: return CROSS;
         }
         throw new RuntimeException("Unknown FieldValue type: " + this);
+    }
+
+    public static FieldValue random(Random random){
+        return random.nextBoolean() ? CROSS : CIRCLE;
     }
 }

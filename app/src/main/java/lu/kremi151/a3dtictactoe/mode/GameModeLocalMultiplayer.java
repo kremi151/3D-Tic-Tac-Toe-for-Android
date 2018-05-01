@@ -24,7 +24,7 @@ import lu.kremi151.a3dtictactoe.util.GameCube;
 
 public class GameModeLocalMultiplayer extends GameMode {
 
-    private FieldValue current = FieldValue.CROSS;
+    private FieldValue current = FieldValue.random(random);
 
     public GameModeLocalMultiplayer(ActivityInterface activity, GameCube cube) {
         super(activity, cube);

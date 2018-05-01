@@ -72,4 +72,13 @@ public class CubeRow {
         }
         return false;
     }
+
+    public static final CubeRow spread(int startX, int startY, int startZ, int dx, int dy, int dz){
+        return new CubeRow(
+                new CubeField(startX, startY, startZ),
+                new CubeField(startX + dx, startY + dy, startZ + dz),
+                new CubeField(startX + (2 * dx), startY + (2 * dy), startZ + (2 * dz)),
+                new CubeField(startX + (3 * dx), startY + (3 * dy), startZ + (3 * dz))
+        );
+    }
 }
