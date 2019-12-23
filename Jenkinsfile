@@ -25,6 +25,15 @@ pipeline {
 				sh './gradlew assembleRelease -x test'
 			}
 		}
+		stage('Sign APK') {
+			steps {
+				signAndroidApks (
+					keyStoreId: "android_signing_key",
+					keyAlias: env.ANDROID_SIGNING_KEY_ALIAS,
+					apksToSign: "app/build/outputs/apk/release/*-unsigned.apk"
+				)
+			}
+		}
 	}
 	post {
 		always {
