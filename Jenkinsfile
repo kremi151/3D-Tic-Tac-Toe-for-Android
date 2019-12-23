@@ -1,27 +1,28 @@
+void setBuildStatus(String message, String state) {
+	step([
+		$class: "GitHubCommitStatusSetter",
+		reposSource: [$class: "ManuallyEnteredRepositorySource", url: env.GIT_URL],
+		commitShaSource: [$class: "ManuallyEnteredShaSource", sha: env.GIT_COMMIT],
+		contextSource: [$class: "ManuallyEnteredCommitContextSource", context: "ci/jenkins/build-status"],
+		errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
+		statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
+	]);
+}
+
 pipeline {
 	agent {
 		label "linux-amd64"
 	}
 	stages {
-		stage('Checkout') {
+		stage('Notify GitHub') {
 			steps {
-				checkout([
-					$class: 'GitSCM',
-					branches: [[name: '*/master']],
-					doGenerateSubmoduleConfigurations: false,
-					extensions: [],
-					submoduleCfg: [],
-					userRemoteConfigs: [[
-						credentialsId: 'kremi151_github',
-						url: 'git@github.com:kremi151/3D-Tic-Tac-Toe-for-Android.git'
-					]]
-				])
+				setBuildStatus('Build in pending', 'PENDING')
 			}
 		}
 		stage('Build') {
 			steps {
 				sh 'chmod +x gradlew'
-				sh 'ANDROID_HOME=/usr/lib/android-sdk ./gradlew assemble'
+				sh './gradlew assembleRelease -x test'
 			}
 		}
 	}
@@ -29,6 +30,15 @@ pipeline {
 		always {
 			archiveArtifacts artifacts: 'app/build/outputs/apk/release/*.apk',
 			onlyIfSuccessful: true
+		}
+		success {
+			setBuildStatus('Build succeeded', 'SUCCESS')
+		}
+		failure {
+			setBuildStatus('Build failed', 'FAILURE')
+		}
+		unstable {
+			setBuildStatus('Build is unstable', 'UNSTABLE')
 		}
 	}
 }
