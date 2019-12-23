@@ -19,21 +19,16 @@
 package lu.kremi151.a3dtictactoe;
 
 import android.annotation.SuppressLint;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import lu.kremi151.a3dtictactoe.fragment.BaseFragment;
-import lu.kremi151.a3dtictactoe.fragment.GameFragment;
-import lu.kremi151.a3dtictactoe.fragment.SingleplayerDifficultyFragment;
 import lu.kremi151.a3dtictactoe.fragment.WelcomeFragment;
-import lu.kremi151.a3dtictactoe.mode.GameModeLocalMultiplayer;
-import lu.kremi151.a3dtictactoe.mode.GameModeSingleplayer;
-import lu.kremi151.a3dtictactoe.util.GameCube;
 
 public class MainActivity extends AppCompatActivity {
 

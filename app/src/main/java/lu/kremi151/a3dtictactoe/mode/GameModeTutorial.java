@@ -18,7 +18,7 @@
 
 package lu.kremi151.a3dtictactoe.mode;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import lu.kremi151.a3dtictactoe.R;
 import lu.kremi151.a3dtictactoe.enums.FieldValue;
