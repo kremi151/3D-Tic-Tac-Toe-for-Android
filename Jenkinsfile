@@ -11,12 +11,12 @@ void setBuildStatus(String message, String state) {
 
 pipeline {
 	agent {
-		label "linux-amd64"
+		label "android-sdk"
 	}
 	stages {
 		stage('Notify GitHub') {
 			steps {
-				setBuildStatus('Build in pending', 'PENDING')
+				setBuildStatus('Build is pending', 'PENDING')
 			}
 		}
 		stage('Build') {
@@ -29,7 +29,6 @@ pipeline {
 			steps {
 				signAndroidApks (
 					keyStoreId: "android_signing_key",
-					keyAlias: env.ANDROID_SIGNING_KEY_ALIAS,
 					apksToSign: "app/build/outputs/apk/release/*-unsigned.apk"
 				)
 			}
