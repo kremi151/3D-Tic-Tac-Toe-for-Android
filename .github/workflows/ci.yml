@@ -15,7 +15,7 @@ jobs:
         with:
           submodules: true
       - name: Build
-        uses: docker://kremi151/android-sdk:android-28
+        uses: docker://kremi151/android-sdk:android-29
         with:
           entrypoint: ./.github/workflows/scripts/build.sh
       - name: Change ownership of build directory
