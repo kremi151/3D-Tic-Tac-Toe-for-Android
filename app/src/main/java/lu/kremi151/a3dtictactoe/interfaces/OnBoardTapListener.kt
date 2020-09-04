@@ -14,12 +14,17 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
-package lu.kremi151.a3dtictactoe.interfaces;
+package lu.kremi151.a3dtictactoe.interfaces
 
-public interface Acceptor<T> {
-
-    void onAccept(T obj);
-
+interface OnBoardTapListener {
+    /**
+     * Called when the game board is tapped
+     * @param x
+     * @param y
+     * @param z
+     * @return returns true is the tap had an effect that should be displayed
+     */
+    fun onTap(x: Int, y: Int, z: Int): Boolean
 }

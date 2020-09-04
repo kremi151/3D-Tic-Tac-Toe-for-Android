@@ -14,38 +14,34 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
-package lu.kremi151.a3dtictactoe.interfaces;
+package lu.kremi151.a3dtictactoe.enums
 
-import android.view.MenuItem;
+import lu.kremi151.a3dtictactoe.R
+import java.util.*
 
-public class ActivityAction implements MenuItem.OnMenuItemClickListener{
+enum class FieldValue(val titleResource: Int) {
+    EMPTY(R.string.empty),
+    CROSS(R.string.cross),
+    CIRCLE(R.string.circle);
 
-    public final String title;
-    public final Runnable action;
-    public boolean enabled = true;
-    public boolean visible = true;
+    fun opposite(): FieldValue {
+        return when (this) {
+            EMPTY -> EMPTY
+            CROSS -> CIRCLE
+            CIRCLE -> CROSS
+            else -> throw RuntimeException("Unknown FieldValue type: $this")
+        }
 
-    public ActivityAction(String title, Runnable action){
-        this.title = title;
-        this.action = action;
     }
 
-    public ActivityAction setEnabled(boolean enabled){
-        this.enabled = enabled;
-        return this;
-    }
+    companion object {
 
-    public ActivityAction setVisible(boolean visible){
-        this.visible = visible;
-        return this;
-    }
+        fun random(random: Random): FieldValue {
+            return if (random.nextBoolean()) CROSS else CIRCLE
+        }
 
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        action.run();
-        return true;
     }
 
 }

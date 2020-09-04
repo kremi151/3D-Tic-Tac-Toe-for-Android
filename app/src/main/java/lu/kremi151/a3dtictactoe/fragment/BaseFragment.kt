@@ -14,31 +14,16 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
-package lu.kremi151.a3dtictactoe.util;
+package lu.kremi151.a3dtictactoe.fragment
 
-import android.annotation.SuppressLint;
-import android.content.SharedPreferences;
+import androidx.fragment.app.Fragment
 
-import lu.kremi151.a3dtictactoe.interfaces.Savegame;
+open class BaseFragment : Fragment() {
 
-public class SharedPreferencesSavegame implements Savegame{
-
-    private final SharedPreferences prefs;
-
-    public SharedPreferencesSavegame(SharedPreferences prefs){
-        this.prefs = prefs;
+    open fun onBackPressed(): Boolean {
+        return false
     }
 
-    @SuppressLint("ApplySharedPref") //Synchronous handling is wanted here
-    @Override
-    public void setMastered(String id, boolean mastered) {
-        this.prefs.edit().putBoolean("mastered_" + id, true).commit();
-    }
-
-    @Override
-    public boolean hasMastered(String id) {
-        return this.prefs.getBoolean("mastered_" + id, false);
-    }
 }

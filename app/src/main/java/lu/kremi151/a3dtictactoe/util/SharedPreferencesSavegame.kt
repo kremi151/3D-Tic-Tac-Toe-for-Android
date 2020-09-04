@@ -14,19 +14,23 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
-package lu.kremi151.a3dtictactoe.interfaces;
+package lu.kremi151.a3dtictactoe.util
 
-public interface OnBoardTapListener {
+import android.annotation.SuppressLint
+import android.content.SharedPreferences
+import lu.kremi151.a3dtictactoe.interfaces.Savegame
 
-    /**
-     * Called when the game board is tapped
-     * @param x
-     * @param y
-     * @param z
-     * @return returns true is the tap had an effect that should be displayed
-     */
-    boolean onTap(int x, int y, int z);
+class SharedPreferencesSavegame(private val prefs: SharedPreferences) : Savegame {
+
+    @SuppressLint("ApplySharedPref") //Synchronous handling is wanted here
+    override fun setMastered(id: String, mastered: Boolean) {
+        prefs.edit().putBoolean("mastered_$id", true).commit()
+    }
+
+    override fun hasMastered(id: String): Boolean {
+        return prefs.getBoolean("mastered_$id", false)
+    }
 
 }

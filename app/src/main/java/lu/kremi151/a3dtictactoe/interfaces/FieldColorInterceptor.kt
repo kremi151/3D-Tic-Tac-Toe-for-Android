@@ -14,13 +14,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
-package lu.kremi151.a3dtictactoe.interfaces;
+package lu.kremi151.a3dtictactoe.interfaces
 
-public interface Savegame {
-
-    void setMastered(String id, boolean mastered);
-    boolean hasMastered(String id);
-
+interface FieldColorInterceptor {
+    fun getFieldColor(x: Int, y: Int, z: Int, oldColor: Int): Int
 }

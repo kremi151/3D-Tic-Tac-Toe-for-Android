@@ -14,39 +14,24 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
-package lu.kremi151.a3dtictactoe.enums;
+package lu.kremi151.a3dtictactoe.util
 
-import java.util.Random;
+open class CubeField(val x: Int, val y: Int, val z: Int) {
 
-import lu.kremi151.a3dtictactoe.R;
-
-public enum FieldValue {
-    EMPTY(R.string.empty),
-    CROSS(R.string.cross),
-    CIRCLE(R.string.circle);
-
-    private final int titleRes;
-
-    private FieldValue(int titleRes){
-        this.titleRes = titleRes;
-    }
-
-    public int getTitleResource(){
-        return titleRes;
-    }
-
-    public FieldValue opposite(){
-        switch(this){
-            case EMPTY: return EMPTY;
-            case CROSS: return CIRCLE;
-            case CIRCLE: return CROSS;
+    override fun equals(other: Any?): Boolean {
+        return when {
+            other === this -> true
+            other?.javaClass == CubeField::class.java -> {
+                (other as CubeField?)!!.x == x && other.y == y && other.z == z
+            }
+            else -> false
         }
-        throw new RuntimeException("Unknown FieldValue type: " + this);
     }
 
-    public static FieldValue random(Random random){
-        return random.nextBoolean() ? CROSS : CIRCLE;
+    override fun hashCode(): Int {
+        return (x * 31 + y) * 31 + z
     }
+
 }

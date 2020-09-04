@@ -16,22 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package lu.kremi151.a3dtictactoe.enums;
+package lu.kremi151.a3dtictactoe.interfaces
 
-public enum SingleplayerDifficulty {
-    VERY_EASY("veasy", 0.7f),
-    EASY("easy", 0.6f),
-    CHALLENGING("challenging", 0.5f),
-    HARD("hard", 0.4f),
-    VERY_HARD("vhard", 0.3f),
-    FRUSTRATING("mommy", 0.2f);
-
-    public final String savIdentifier;
-    public final float attack;
-
-    private SingleplayerDifficulty(String savIdentifier, float attack){
-        this.savIdentifier = savIdentifier;
-        this.attack = attack;
-    }
-
+interface Savegame {
+    fun setMastered(id: String, mastered: Boolean)
+    fun hasMastered(id: String): Boolean
 }

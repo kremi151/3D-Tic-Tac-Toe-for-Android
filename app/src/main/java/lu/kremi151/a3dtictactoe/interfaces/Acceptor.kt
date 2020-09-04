@@ -14,10 +14,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
-package lu.kremi151.a3dtictactoe.interfaces;
+package lu.kremi151.a3dtictactoe.interfaces
 
-public interface FieldColorInterceptor {
-    int getFieldColor(int x, int y, int z, int oldColor);
-}
+typealias Acceptor<T> = (obj: T) -> Unit

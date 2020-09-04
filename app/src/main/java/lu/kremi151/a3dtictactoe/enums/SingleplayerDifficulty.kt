@@ -14,16 +14,15 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
-package lu.kremi151.a3dtictactoe.fragment;
+package lu.kremi151.a3dtictactoe.enums
 
-import androidx.fragment.app.Fragment;
-
-public class BaseFragment extends Fragment{
-
-    public boolean onBackPressed(){
-        return false;
-    }
-
+enum class SingleplayerDifficulty(val savIdentifier: String, val attack: Float) {
+    VERY_EASY("veasy", 0.7f),
+    EASY("easy", 0.6f),
+    CHALLENGING("challenging", 0.5f),
+    HARD("hard", 0.4f),
+    VERY_HARD("vhard", 0.3f),
+    FRUSTRATING("mommy", 0.2f);
 }

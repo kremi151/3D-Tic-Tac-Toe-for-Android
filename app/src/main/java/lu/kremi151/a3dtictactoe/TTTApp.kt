@@ -16,26 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package lu.kremi151.a3dtictactoe;
+package lu.kremi151.a3dtictactoe
 
-import android.app.Application;
-import android.content.SharedPreferences;
+import android.app.Application
+import android.content.Context
+import lu.kremi151.a3dtictactoe.interfaces.Savegame
+import lu.kremi151.a3dtictactoe.util.SharedPreferencesSavegame
 
-import lu.kremi151.a3dtictactoe.interfaces.Savegame;
-import lu.kremi151.a3dtictactoe.util.SharedPreferencesSavegame;
 
-public class TTTApp extends Application{
+class TTTApp : Application() {
+    lateinit var savegame: Savegame
+        private set
 
-    private Savegame savegame;
-
-    @Override
-    public void onCreate(){
-        super.onCreate();
-        this.savegame = new SharedPreferencesSavegame(getSharedPreferences("3dtitato.save", MODE_PRIVATE));
-    }
-
-    public Savegame getSavegame(){
-        return savegame;
+    override fun onCreate() {
+        super.onCreate()
+        savegame = SharedPreferencesSavegame(getSharedPreferences("3dtitato.save", Context.MODE_PRIVATE))
     }
 
 }
