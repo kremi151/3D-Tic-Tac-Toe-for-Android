@@ -10,6 +10,8 @@ This can be done either horizontally, vertically or diagonally, in any three-dim
 
 <a href='http://play.google.com/store/apps/details?id=lu.kremi151.a3dtictactoe'><img width="240" alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/></a>
 
+Google Play and the Google Play logo are trademarks of Google LLC.
+
 ## Build the app
 Run the one of following commands:
 
